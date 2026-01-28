@@ -2,7 +2,7 @@ import { useState } from 'react';
 import ClickOutside from '../ClickOutside';
 import React from 'react';
 import { Link } from 'react-router';
-import { useT } from '@ciscode-template-model/translate-core';
+import { useT } from '@ciscode/ui-translate-core';
 
 type DropdownUserProps = {
   onLogout?: () => void;

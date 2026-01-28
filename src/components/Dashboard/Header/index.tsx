@@ -4,7 +4,7 @@ import DropdownUser from './DropdownUser';
 // import LogoIcon from '../../../assets/images/logo/logo-icon.svg';
 import DarkModeSwitcher from './DarkModeSwitcher';
 import React from 'react';
-import { useT } from '@ciscode-template-model/translate-core';
+import { useT } from '@ciscode/ui-translate-core';
 
 const Header = (props: {
   sidebarOpen: string | boolean | undefined;

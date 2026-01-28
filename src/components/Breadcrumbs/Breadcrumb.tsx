@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router';
-import { useT } from '@ciscode-template-model/translate-core';
+import { useT } from '@ciscode/ui-translate-core';
 
 interface BreadcrumbProps {
   pageName: string;

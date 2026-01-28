@@ -3,7 +3,7 @@ import { generatePageNumbers } from '../../hooks/useGeneratePageNumbers';
 import { TableLoader } from '../../common/Loader/TableLoader';
 import { ToolbarItem } from '../../models/ToolbarItemModel';
 import { ColumnConfigTable } from '../../models/ColumnConfigTable';
-import { Trans, useT } from '@ciscode-template-model/translate-core';
+import { Trans, useT } from '@ciscode/ui-translate-core';
 import { TablePopover } from './TablePopover';
 
 export type PaginationProps = {
@@ -164,8 +164,8 @@ function TableDataCustomBase<T>({
                         <button
                           onClick={() => pagination.onPageChange?.(p)}
                           className={`flex items-center justify-center px-3 py-2 text-sm border ${p === pagination.currentPage
-                              ? 'z-10 text-primary-600 bg-primary-50 border-primary-300 hover:bg-primary-100 hover:text-primary-700 dark:bg-gray-700 dark:text-white dark:border-gray-700'
-                              : 'text-gray-500 bg-white border-gray-300 hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-700 dark:hover:bg-gray-700'
+                            ? 'z-10 text-primary-600 bg-primary-50 border-primary-300 hover:bg-primary-100 hover:text-primary-700 dark:bg-gray-700 dark:text-white dark:border-gray-700'
+                            : 'text-gray-500 bg-white border-gray-300 hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-700 dark:hover:bg-gray-700'
                             }`}
                         >
                           {p}

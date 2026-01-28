@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState, ReactNode } from 'react';
 import { useLocation, NavLink } from 'react-router';
 import SidebarLinkGroup from './SidebarLinkGroup';
 import { SidebarSection } from '../../../models/SidebarItemModel';
-import { useT } from '@ciscode-template-model/translate-core';
+import { useT } from '@ciscode/ui-translate-core';
 
 interface SidebarProps {
   sidebarOpen: boolean;

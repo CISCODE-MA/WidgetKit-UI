@@ -1,5 +1,5 @@
 import React from 'react';
-import { Trans } from '@ciscode-template-model/translate-core';
+import { Trans } from '@ciscode/ui-translate-core';
 
 export interface PaginationProps {
     currentPage: number;

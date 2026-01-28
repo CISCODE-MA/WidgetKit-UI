@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import ClickOutside from '../ClickOutside';
 import { Link } from 'react-router';
-import { useT } from '@ciscode-template-model/translate-core';
+import { useT } from '@ciscode/ui-translate-core';
 
 interface NotificationItem {
   id: number;
@@ -54,9 +54,8 @@ const DropdownNotification: React.FC = () => {
           className="relative flex h-8.5 w-8.5 items-center justify-center rounded-full border-[0.5px] border-stroke bg-gray hover:text-primary dark:border-strokedark dark:bg-meta-4 dark:text-white"
         >
           <span
-            className={`absolute -top-0.5 ltr:-right-0.5 rtl:-left-0.5 z-1 h-2 w-2 rounded-full bg-meta-1 ${
-              notifying === false ? 'hidden' : 'inline'
-            }`}
+            className={`absolute -top-0.5 ltr:-right-0.5 rtl:-left-0.5 z-1 h-2 w-2 rounded-full bg-meta-1 ${notifying === false ? 'hidden' : 'inline'
+              }`}
           >
             <span className="absolute -z-1 inline-flex h-full w-full animate-ping rounded-full bg-meta-1 opacity-75"></span>
           </span>

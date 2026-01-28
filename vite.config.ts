@@ -9,7 +9,7 @@ export default defineConfig({
       fileName: "index",
     },
     rollupOptions: {
-      external: ["react", "react-dom", "react-router", "zod", "@ciscode-template-model/translate-core"],
+      external: ["react", "react-dom", "react-router", "zod", "@ciscode/ui-translate-core"],
     },
   },
 });

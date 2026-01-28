@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router';
 import ClickOutside from '../ClickOutside';
-import { useT } from '@ciscode-template-model/translate-core';
+import { useT } from '@ciscode/ui-translate-core';
 
 const DropdownMessage: React.FC = () => {
   const [dropdownOpen, setDropdownOpen] = useState(false);
@@ -29,9 +29,8 @@ const DropdownMessage: React.FC = () => {
           to="#"
         >
           <span
-            className={`absolute -top-0.5 ltr:-right-0.5 rtl:-left-0.5 z-1 h-2 w-2 rounded-full bg-meta-1 ${
-              notifying === false ? 'hidden' : 'inline'
-            }`}
+            className={`absolute -top-0.5 ltr:-right-0.5 rtl:-left-0.5 z-1 h-2 w-2 rounded-full bg-meta-1 ${notifying === false ? 'hidden' : 'inline'
+              }`}
           >
             <span className="absolute -z-1 inline-flex h-full w-full animate-ping rounded-full bg-meta-1 opacity-75"></span>
           </span>
