@@ -1,3 +1,2 @@
-export * from "./components";
-export * from "./hooks";
-export * from "./utils";
+import './assets/styles/style.css'
+export * from './main/app';
