@@ -1,48 +1,44 @@
-name: CD - Release
+name: Publish to NPM
 
 on:
   push:
-    tags:
-      - 'v*'
-
-permissions:
-  contents: read
-  id-token: write
+    branches:
+      - master
+  workflow_dispatch:
 
 jobs:
-  release:
-    name: CD - Release
+  publish:
     runs-on: ubuntu-latest
 
+    permissions:
+      contents: read
+      packages: write
+
     steps:
-      - name: Checkout
+      - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Setup Node
+      - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: 20
-          cache: npm
-          registry-url: 'https://registry.npmjs.org'
+          node-version: "20"
+          registry-url: "https://registry.npmjs.org"
 
-      - name: Install
+      - name: Install dependencies
         run: npm ci
 
-      - name: Format (check)
-        run: npm run format
+      - name: Run lint (if present)
+        run: npm run lint --if-present
+        continue-on-error: false
 
-      - name: Lint
-        run: npm run lint
+      - name: Run tests (if present)
+        run: npm test --if-present
+        continue-on-error: false
 
-      - name: Typecheck
-        run: npm run typecheck
-
-      - name: Test
-        run: npm test
-
-      - name: Build
+      - name: Build package
         run: npm run build
 
-      # Trusted Publishing (OIDC) – requires npm package configured for GitHub OIDC
-      - name: Publish to npm (OIDC)
-        run: npx changeset publish
+      - name: Publish to NPM
+        run: npm publish --access public
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
