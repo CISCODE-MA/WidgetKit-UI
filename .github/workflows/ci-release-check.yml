@@ -13,6 +13,8 @@ env:
 jobs:
   release-check:
     name: CI - Release Check
+    # Only run when PR is from develop -> master
+    if: github.head_ref == 'develop'
     runs-on: ubuntu-latest
 
     steps:
