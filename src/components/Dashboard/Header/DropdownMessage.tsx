@@ -29,8 +29,9 @@ const DropdownMessage: React.FC = () => {
           to="#"
         >
           <span
-            className={`absolute -top-0.5 ltr:-right-0.5 rtl:-left-0.5 z-1 h-2 w-2 rounded-full bg-meta-1 ${notifying === false ? 'hidden' : 'inline'
-              }`}
+            className={`absolute -top-0.5 ltr:-right-0.5 rtl:-left-0.5 z-1 h-2 w-2 rounded-full bg-meta-1 ${
+              notifying === false ? 'hidden' : 'inline'
+            }`}
           >
             <span className="absolute -z-1 inline-flex h-full w-full animate-ping rounded-full bg-meta-1 opacity-75"></span>
           </span>
@@ -63,13 +64,9 @@ const DropdownMessage: React.FC = () => {
         </Link>
 
         {dropdownOpen && (
-          <div
-            className="absolute mt-2.5 flex h-90 w-75 flex-col rounded-sm border border-stroke bg-white shadow-default dark:border-strokedark dark:bg-boxdark ltr:-right-16 rtl:-left-16 sm:ltr:right-0 sm:rtl:left-0 sm:w-80"
-          >
+          <div className="absolute mt-2.5 flex h-90 w-75 flex-col rounded-sm border border-stroke bg-white shadow-default dark:border-strokedark dark:bg-boxdark ltr:-right-16 rtl:-left-16 sm:ltr:right-0 sm:rtl:left-0 sm:w-80">
             <div className="px-4.5 py-3">
-              <h5 className="text-sm font-medium text-bodydark2">
-                {t('dropdown.messages')}
-              </h5>
+              <h5 className="text-sm font-medium text-bodydark2">{t('dropdown.messages')}</h5>
             </div>
 
             <ul className="flex h-auto flex-col overflow-y-auto">
@@ -84,9 +81,7 @@ const DropdownMessage: React.FC = () => {
                     </div>
 
                     <div>
-                      <h6 className="text-sm font-medium text-black dark:text-white">
-                        {user}
-                      </h6>
+                      <h6 className="text-sm font-medium text-black dark:text-white">{user}</h6>
                       <p className="text-sm">{text}</p>
                       <p className="text-xs">{time}</p>
                     </div>

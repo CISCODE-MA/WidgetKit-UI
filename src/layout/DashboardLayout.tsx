@@ -65,9 +65,7 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({
           <div className="flex min-h-0 flex-1 flex-col">
             {/* Content */}
             <main className="flex-1">
-              <div className="mx-auto max-w-screen-2xl p-4 md:p-6 2xl:p-10">
-                {children}
-              </div>
+              <div className="mx-auto max-w-screen-2xl p-4 md:p-6 2xl:p-10">{children}</div>
             </main>
 
             {/* Sticky footer (preset has priority over blocks) */}
@@ -75,9 +73,7 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({
               <footer className={['ciscod-footer', footer?.className ?? ''].join(' ')}>
                 <div className="ciscod-footer__inner">
                   <div className="ciscod-footer__content">
-                    <div className="ciscod-footer__left">
-                      {footer?.preset?.leftText}
-                    </div>
+                    <div className="ciscod-footer__left">{footer?.preset?.leftText}</div>
 
                     <div className="ciscod-footer__right">
                       {footer?.preset?.links?.length ? (
@@ -99,9 +95,7 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({
                       ) : null}
 
                       {footer?.preset?.version ? (
-                        <span className="ciscod-footer__version">
-                          {footer.preset.version}
-                        </span>
+                        <span className="ciscod-footer__version">{footer.preset.version}</span>
                       ) : null}
                     </div>
                   </div>

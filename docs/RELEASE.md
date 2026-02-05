@@ -56,13 +56,13 @@ Publishing is triggered by pushing a git tag on `master`.
 
 Steps:
 
-1. On `develop`, apply versions locally using changesets:
+1.  On `develop`, apply versions locally using changesets:
 
 ```bash
 npm run version-packages
 ```
 
-2. Commit the version bump (package.json + changelog output)
+2.  Commit the version bump (package.json + changelog output)
 
 ```bash
 git add -A
@@ -70,7 +70,51 @@ git commit -m "chore: version packages"
 git push
 ```
 
-3. Merge `develop` → `master`
+## Publishing
+
+Run `npm run prepublishOnly` locally; fix any errors.
+Create a Changeset: `npx changeset` and commit changelog + version bump.
+Build: `npm run build`.
+
+## CI (optional)
+
+If using GitHub Actions, add a simple workflow:
+
+```yaml
+name: CI
+on:
+  push:
+    branches: [develop, master]
+  pull_request:
+    branches: [develop]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'npm'
+      - run: npm ci
+      - run: npm run lint
+      - run: npm run typecheck
+      - run: npm run test:cov
+  build:
+    runs-on: ubuntu-latest
+    needs: test
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'npm'
+      - run: npm ci
+      - run: npm run build
+```
+
+Publishing can be handled manually or via a protected workflow with OIDC. 3. Merge `develop` → `master`
 
 4. Tag the release on `master` and push tag:
 

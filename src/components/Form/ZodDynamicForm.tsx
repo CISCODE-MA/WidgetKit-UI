@@ -31,7 +31,7 @@ export default function ControlledZodDynamicForm({
    * Uses a type guard so we can safely read e.target.checked if it's a checkbox.
    */
   function handleInputChange(
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>,
   ) {
     const { name, value, type } = e.target;
     let newValue: any = value;
@@ -56,7 +56,6 @@ export default function ControlledZodDynamicForm({
       const parsed = schema.parse(values);
       // If success, call parent
       onSubmit(parsed);
-
     } catch (err) {
       if (err instanceof ZodError) {
         // Build a record of errors for simpler fields
@@ -85,7 +84,6 @@ export default function ControlledZodDynamicForm({
     }
   }
 
-
   return (
     <form onSubmit={handleSubmit} className="space-y-6">
       {/* header */}
@@ -98,10 +96,7 @@ export default function ControlledZodDynamicForm({
 
         return (
           <div key={field.name} className="mb-4">
-            <label
-              htmlFor={field.name}
-              className="block mb-1 font-medium text-gray-700"
-            >
+            <label htmlFor={field.name} className="block mb-1 font-medium text-gray-700">
               {field.label}
             </label>
 
@@ -155,14 +150,14 @@ export default function ControlledZodDynamicForm({
                   // The user’s current selection is an array of IDs => find the matching option or fallback
                   const selectedValues = Array.isArray(fieldValue)
                     ? fieldValue.map((id: string) => {
-                      const found = multiOpts.find((o) => o.value === id);
-                      if (found) return found;
-                      // fallback => ensures a unique string value
-                      return {
-                        label: String(id) || '???',
-                        value: String(id),
-                      };
-                    })
+                        const found = multiOpts.find((o) => o.value === id);
+                        if (found) return found;
+                        // fallback => ensures a unique string value
+                        return {
+                          label: String(id) || '???',
+                          value: String(id),
+                        };
+                      })
                     : [];
 
                   return (
@@ -172,10 +167,12 @@ export default function ControlledZodDynamicForm({
                       value={selectedValues}
                       onChange={(selected) => {
                         // selected: array of { label, value }
-                        const arrIds = (selected as MultiValue<{
-                          label: string;
-                          value: string;
-                        }>).map((opt) => opt.value);
+                        const arrIds = (
+                          selected as MultiValue<{
+                            label: string;
+                            value: string;
+                          }>
+                        ).map((opt) => opt.value);
                         onChangeField(field.name, arrIds);
                       }}
                       className="w-full"
@@ -203,11 +200,10 @@ export default function ControlledZodDynamicForm({
                       onChange={(newVal: any) => onChangeField(field.name, newVal)}
                       errors={subErrors}
                       {...field.props}
-                    // optionally pass more props if needed
+                      // optionally pass more props if needed
                     />
                   );
                 }
-
 
                 default:
                   // text or number
@@ -215,8 +211,8 @@ export default function ControlledZodDynamicForm({
                     <input
                       id={field.name}
                       name={field.name}
-                      type={field.type === 'number' ? 'number' : 'textt'}
-                      step={field.step || '1'} // fallback if no step is provide
+                      type={field.type === 'number' ? 'number' : 'text'}
+                      step={field.step || '1'} // fallback if no step is provided
                       placeholder={field.placeholder}
                       value={fieldValue}
                       onChange={handleInputChange}
@@ -226,11 +222,7 @@ export default function ControlledZodDynamicForm({
               }
             })()}
 
-            {fieldError && (
-              <p className="mt-1 text-sm text-red-600">
-                {fieldError}
-              </p>
-            )}
+            {fieldError && <p className="mt-1 text-sm text-red-600">{fieldError}</p>}
           </div>
         );
       })}
@@ -250,7 +242,7 @@ export default function ControlledZodDynamicForm({
 //Show erros validation
 export function findNestedErrors(
   allErrors: Record<string, string>,
-  rootField: string
+  rootField: string,
 ): Record<number, Record<string, string>> {
   const nested: Record<number, Record<string, string>> = {};
 

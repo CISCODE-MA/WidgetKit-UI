@@ -23,9 +23,7 @@ const DropdownUser: React.FC<DropdownUserProps> = ({ onLogout }) => {
         to="#"
       >
         <span className="hidden lg:block ltr:text-right rtl:text-left">
-          <span className="block text-sm font-medium text-black dark:text-white">
-            Thomas Anree
-          </span>
+          <span className="block text-sm font-medium text-black dark:text-white">Thomas Anree</span>
           <span className="block text-xs">{translatedRole}</span>
         </span>
 
