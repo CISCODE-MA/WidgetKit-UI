@@ -6,7 +6,7 @@ import prettier from 'eslint-config-prettier';
 
 export default [
   {
-    ignores: ['dist/**', 'node_modules/**', 'coverage/**', '.vitest/**'],
+    ignores: ['dist/**', 'node_modules/**', 'coverage/**', '.vitest/**', 'tests/**'],
   },
 
   js.configs.recommended,
@@ -18,6 +18,7 @@ export default [
     plugins: {
       react,
       'react-hooks': reactHooks,
+      '@typescript-eslint': tseslint.plugin,
     },
     languageOptions: {
       parserOptions: {
@@ -32,6 +33,31 @@ export default [
 
       // modern React: no need for React import in scope
       'react/react-in-jsx-scope': 'off',
+
+      // disable noisy React Compiler memoization rule for now
+      'react-hooks/preserve-manual-memoization': 'off',
+
+      // quality hints
+      'react/jsx-no-useless-fragment': 'warn',
+      'react/prop-types': 'off',
+      '@typescript-eslint/no-explicit-any': 'warn',
+      '@typescript-eslint/explicit-module-boundary-types': 'warn',
+      // reduce friction during refactors
+      '@typescript-eslint/no-unused-vars': 'warn',
+    },
+  },
+  // Node-focused config files
+  {
+    files: ['postcss.config.js', 'tailwind.config.js'],
+    languageOptions: {
+      globals: {
+        module: 'readonly',
+        require: 'readonly',
+      },
+    },
+    rules: {
+      'no-undef': 'off',
+      '@typescript-eslint/no-require-imports': 'off',
     },
   },
   {

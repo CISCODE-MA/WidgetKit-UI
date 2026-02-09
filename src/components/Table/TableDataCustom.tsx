@@ -3,15 +3,16 @@ import TableErrorBoundary from '../../exceptions/TableErrorBoundary';
 import TableDataCustomBase, { TableDataCustomProps } from './TableDataCustomBase';
 
 /**
- * Wraps the TableDataCustomBase in the TableErrorBoundary.
- * The models only import this file, so they get error boundary by default.
+ * Public table component with built-in error boundary.
+ * Wraps `TableDataCustomBase` in `TableErrorBoundary` to provide a safe fallback.
+ * Consumers should import `TableDataCustom` from the package root.
  */
 function TableDataCustom<T>(props: TableDataCustomProps<T>) {
-    return (
-        <TableErrorBoundary>
-            <TableDataCustomBase {...props} />
-        </TableErrorBoundary>
-    );
+  return (
+    <TableErrorBoundary>
+      <TableDataCustomBase {...props} />
+    </TableErrorBoundary>
+  );
 }
 
 export default TableDataCustom;

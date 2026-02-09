@@ -96,7 +96,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen, sections, logo }: SidebarProps) 
         <nav className="mt-5 py-4 px-4 lg:mt-9 lg:px-6">
           {sortedSections.map((section) => {
             const sortedItems = [...section.items].sort(
-              (a, b) => (a.order ?? 9999) - (b.order ?? 9999)
+              (a, b) => (a.order ?? 9999) - (b.order ?? 9999),
             );
 
             return (

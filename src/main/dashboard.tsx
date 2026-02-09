@@ -13,7 +13,12 @@ import type {
   TemplateFooterConfig,
 } from './layoutTypes';
 
-interface DashboardProps {
+/**
+ * Props for the `Template` (Dashboard Shell) component.
+ * Backward compatible with legacy sidebar/logo/onLogout while
+ * supporting modern `sidebar`, `navbar`, and optional `footer` configs.
+ */
+export interface DashboardProps {
   children: ReactNode;
 
   /**

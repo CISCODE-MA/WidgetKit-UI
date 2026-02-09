@@ -1,17 +1,10 @@
 import React from 'react';
 
 /** The list of supported field types. */
-type FieldType =
-  | 'text'
-  | 'number'
-  | 'textarea'
-  | 'select'
-  | 'checkbox'
-  | 'multiSelect'
-  | 'custom'
+type FieldType = 'text' | 'number' | 'textarea' | 'select' | 'checkbox' | 'multiSelect' | 'custom';
 
 /** For select-type fields, each option has a label and a value. */
- interface FieldOption {
+interface FieldOption {
   label: string;
   value: string | number;
 }
@@ -44,13 +37,13 @@ export interface FieldConfigDynamicForm {
   component?: React.ComponentType<any>;
   // Add a `step` property for numeric fields
   step?: string;
-  /** 
+  /**
    * Tailwind classes for the field wrapper (the <div>).
    * e.g. "w-1/2 px-2" or "col-span-2" or "flex-1"
    */
   wrapperClassName?: string;
 
-  /** 
+  /**
    * If you want custom classes for the <label>, <input>, etc.
    */
   labelClassName?: string;
