@@ -1,4 +1,4 @@
-import React10, { useState, useEffect, useRef, useCallback } from 'react';
+import React10, { useState, useEffect, useRef, useCallback, useMemo } from 'react';
 import { useLocation, NavLink, Link as Link$1 } from 'react-router';
 import { jsx, jsxs, Fragment } from 'react/jsx-runtime';
 import { useT } from '@ciscode/ui-translate-core';
@@ -1067,15 +1067,68 @@ var TablePopover = ({ anchor, children, onClose }) => {
     document.body
   );
 };
+function InlineEditableCell(props) {
+  const { value, row, rowIndex, onCommit, editor, children } = props;
+  const [editing, setEditing] = useState(false);
+  const [draft, setDraft] = useState(value != null ? value : "");
+  const startEdit = useCallback(() => {
+    setDraft(value != null ? value : "");
+    setEditing(true);
+  }, [value]);
+  const commit = useCallback(() => {
+    setEditing(false);
+    onCommit(draft);
+  }, [draft, onCommit]);
+  const cancel = useCallback(() => {
+    setEditing(false);
+    setDraft(value != null ? value : "");
+  }, [value]);
+  if (!editing) {
+    return /* @__PURE__ */ jsx("div", { onDoubleClick: startEdit, className: "cursor-text", children });
+  }
+  if (editor) {
+    return /* @__PURE__ */ jsx("div", { className: "flex items-center", children: editor({
+      value: draft,
+      row,
+      rowIndex,
+      onChange: setDraft,
+      onCommit: commit,
+      onCancel: cancel
+    }) });
+  }
+  return /* @__PURE__ */ jsx(
+    "input",
+    {
+      autoFocus: true,
+      type: "text",
+      value: String(draft != null ? draft : ""),
+      onChange: (e) => setDraft(e.target.value),
+      onBlur: commit,
+      onKeyDown: (e) => {
+        if (e.key === "Enter") commit();
+        if (e.key === "Escape") cancel();
+      },
+      className: "px-2 py-1 text-sm border rounded-md dark:bg-gray-700 dark:text-white"
+    }
+  );
+}
 function TableDataCustomBase({
   columns,
   data,
   errorMessage,
   pagination,
   loading,
-  toolbarItems
+  toolbarItems,
+  enableSelection,
+  enableSorting,
+  enableFilter,
+  enableInlineEdit,
+  filterQuery,
+  onFilterQueryChange,
+  onSelectionChange,
+  onCellEdit
 }) {
-  var _a, _b;
+  var _a, _b, _c;
   const t = useT("templateFe");
   const leftItems = (toolbarItems != null ? toolbarItems : []).filter(
     (it) => {
@@ -1088,29 +1141,182 @@ function TableDataCustomBase({
   );
   const [popover, setPopover] = useState(null);
   const closePopover = useCallback(() => setPopover(null), []);
+  const [selected, setSelected] = useState(/* @__PURE__ */ new Set());
+  const toggleSelectAll = useCallback(
+    (checked, count) => {
+      const next = /* @__PURE__ */ new Set();
+      if (checked) {
+        for (let i = 0; i < count; i++) next.add(i);
+      }
+      setSelected(next);
+    },
+    []
+  );
+  const toggleRowSelection = useCallback((index) => {
+    setSelected((prev) => {
+      const next = new Set(prev);
+      if (next.has(index)) next.delete(index);
+      else next.add(index);
+      return next;
+    });
+  }, []);
+  const [sortBy, setSortBy] = useState(null);
+  const [sortDir, setSortDir] = useState("asc");
+  const onHeaderClick = useCallback(
+    (colIndex, col) => {
+      if (!enableSorting || col.sortable === false) return;
+      setSortBy((prev) => prev === colIndex ? colIndex : colIndex);
+      setSortDir((prev) => sortBy === colIndex ? prev === "asc" ? "desc" : "asc" : "asc");
+    },
+    [enableSorting, sortBy]
+  );
+  const [internalQuery, setInternalQuery] = useState("");
+  const activeQuery = (filterQuery != null ? filterQuery : internalQuery).trim();
+  const visibleData = useMemo(() => {
+    let rows = [...data];
+    if (enableFilter && activeQuery.length > 0) {
+      const q = activeQuery.toLowerCase();
+      rows = rows.filter((row) => {
+        return columns.some((col) => {
+          const keys = Array.isArray(col.key) ? col.key : [col.key];
+          const val = keys.map((k) => {
+            var _a2;
+            return String((_a2 = row[k]) != null ? _a2 : "");
+          }).join(" ").toLowerCase();
+          if (col.filterPredicate) {
+            return col.filterPredicate(val, row, q);
+          }
+          return val.includes(q);
+        });
+      });
+    }
+    if (enableSorting && sortBy != null) {
+      const col = columns[sortBy];
+      rows.sort((a, b) => {
+        const keys = Array.isArray(col.key) ? col.key : [col.key];
+        const va = keys.map((k) => a[k]);
+        const vb = keys.map((k) => b[k]);
+        const left = va.length > 1 ? va.join(" ") : va[0];
+        const right = vb.length > 1 ? vb.join(" ") : vb[0];
+        let cmp = 0;
+        if (typeof col.sortComparator === "function") {
+          cmp = col.sortComparator(left, right, a, b);
+        } else {
+          const la = left != null ? left : "";
+          const lb = right != null ? right : "";
+          const sa = String(la).toLowerCase();
+          const sb = String(lb).toLowerCase();
+          if (sa < sb) cmp = -1;
+          else if (sa > sb) cmp = 1;
+          else cmp = 0;
+        }
+        return sortDir === "asc" ? cmp : -cmp;
+      });
+    }
+    return rows;
+  }, [data, columns, enableFilter, activeQuery, enableSorting, sortBy, sortDir]);
+  React10.useEffect(() => {
+    if (!onSelectionChange) return;
+    const indices = Array.from(selected.values()).sort((a, b) => a - b);
+    const rows = indices.map((i) => visibleData[i]).filter(Boolean);
+    onSelectionChange(rows, indices);
+  }, [selected, visibleData, onSelectionChange]);
   return /* @__PURE__ */ jsx(Fragment, { children: /* @__PURE__ */ jsxs("section", { children: [
     popover && /* @__PURE__ */ jsx(TablePopover, { anchor: popover.anchor, onClose: closePopover, children: popover.content }),
     /* @__PURE__ */ jsx("div", { className: "mx-auto", children: /* @__PURE__ */ jsxs("div", { className: "relative overflow-hidden bg-white shadow-md dark:bg-gray-800 sm:rounded-lg", children: [
-      (leftItems.length > 0 || rightItems.length > 0) && /* @__PURE__ */ jsxs("div", { className: "flex flex-col px-4 py-3 space-y-3 lg:flex-row lg:items-center lg:justify-between lg:space-y-0 ltr:lg:space-x-4 rtl:lg:space-x-reverse", children: [
-        /* @__PURE__ */ jsx("div", { className: "flex items-center flex-wrap gap-3", children: leftItems.map((it, i) => /* @__PURE__ */ jsx(React10.Fragment, { children: it.node }, i)) }),
+      (leftItems.length > 0 || rightItems.length > 0 || enableFilter) && /* @__PURE__ */ jsxs("div", { className: "flex flex-col px-4 py-3 space-y-3 lg:flex-row lg:items-center lg:justify-between lg:space-y-0 ltr:lg:space-x-4 rtl:lg:space-x-reverse", children: [
+        /* @__PURE__ */ jsxs("div", { className: "flex items-center flex-wrap gap-3", children: [
+          leftItems.map((it, i) => /* @__PURE__ */ jsx(React10.Fragment, { children: it.node }, i)),
+          enableFilter && /* @__PURE__ */ jsx(
+            "input",
+            {
+              type: "text",
+              value: filterQuery != null ? filterQuery : internalQuery,
+              onChange: (e) => onFilterQueryChange ? onFilterQueryChange(e.target.value) : setInternalQuery(e.target.value),
+              placeholder: (_a = t("table.filter")) != null ? _a : "Filter\u2026",
+              className: "px-3 py-2 text-sm border rounded-md dark:bg-gray-700 dark:text-white"
+            }
+          )
+        ] }),
         /* @__PURE__ */ jsx("div", { className: "flex items-center flex-wrap gap-3", children: rightItems.map((it, i) => /* @__PURE__ */ jsx(React10.Fragment, { children: it.node }, i)) })
       ] }),
       /* @__PURE__ */ jsx("div", { className: "overflow-x-auto", children: /* @__PURE__ */ jsxs("table", { className: "w-full text-sm text-gray-500 dark:text-gray-400 ltr:text-left rtl:text-right", children: [
-        /* @__PURE__ */ jsx("thead", { className: "text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400", children: /* @__PURE__ */ jsx("tr", { children: columns.map((col, i) => /* @__PURE__ */ jsx("th", { className: "px-4 py-3", children: col.title }, i)) }) }),
-        /* @__PURE__ */ jsx("tbody", { children: loading ? /* @__PURE__ */ jsx("tr", { children: /* @__PURE__ */ jsx("td", { colSpan: columns.length, className: "py-4 text-center", children: /* @__PURE__ */ jsx(TableLoader, {}) }) }) : errorMessage ? /* @__PURE__ */ jsx("tr", { children: /* @__PURE__ */ jsx("td", { colSpan: columns.length, className: "py-4 text-center text-red-600", children: errorMessage }) }) : data.length === 0 ? /* @__PURE__ */ jsx("tr", { children: /* @__PURE__ */ jsx("td", { colSpan: columns.length, className: "py-4 text-center", children: t("table.noData") }) }) : data.map((row, r) => /* @__PURE__ */ jsx("tr", { className: "border-b", children: columns.map((col, c) => {
-          let content;
-          if (Array.isArray(col.key)) {
-            const vals = col.key.map((k) => {
-              var _a2;
-              return (_a2 = row[k]) != null ? _a2 : "";
-            });
-            content = col.render ? col.render(vals, row, setPopover) : vals.join(" - ");
-          } else {
-            const val = row[col.key];
-            content = col.render ? col.render(val, row, setPopover) : String(val != null ? val : "");
-          }
-          return /* @__PURE__ */ jsx("td", { className: "px-4 py-3 ltr:text-left rtl:text-right", children: content }, c);
-        }) }, r)) })
+        /* @__PURE__ */ jsx("thead", { className: "text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400", children: /* @__PURE__ */ jsxs("tr", { children: [
+          enableSelection && /* @__PURE__ */ jsx("th", { className: "px-4 py-3", children: /* @__PURE__ */ jsx(
+            "input",
+            {
+              type: "checkbox",
+              "aria-label": "Select all",
+              checked: selected.size > 0 && selected.size === visibleData.length,
+              onChange: (e) => toggleSelectAll(e.target.checked, visibleData.length)
+            }
+          ) }),
+          columns.map((col, i) => /* @__PURE__ */ jsx(
+            "th",
+            {
+              className: "px-4 py-3 select-none cursor-pointer",
+              onClick: () => onHeaderClick(i, col),
+              title: enableSorting && col.sortable !== false ? "Sort" : void 0,
+              children: /* @__PURE__ */ jsxs("span", { className: "inline-flex items-center gap-1", children: [
+                col.title,
+                enableSorting && sortBy === i && /* @__PURE__ */ jsx(
+                  "svg",
+                  {
+                    className: "w-3 h-3",
+                    fill: "currentColor",
+                    viewBox: "0 0 20 20",
+                    children: sortDir === "asc" ? /* @__PURE__ */ jsx("path", { d: "M10 5l-5 6h10L10 5z" }) : /* @__PURE__ */ jsx("path", { d: "M10 15l5-6H5l5 6z" })
+                  }
+                )
+              ] })
+            },
+            i
+          ))
+        ] }) }),
+        /* @__PURE__ */ jsx("tbody", { children: loading ? /* @__PURE__ */ jsx("tr", { children: /* @__PURE__ */ jsx("td", { colSpan: (enableSelection ? 1 : 0) + columns.length, className: "py-4 text-center", children: /* @__PURE__ */ jsx(TableLoader, {}) }) }) : errorMessage ? /* @__PURE__ */ jsx("tr", { children: /* @__PURE__ */ jsx("td", { colSpan: (enableSelection ? 1 : 0) + columns.length, className: "py-4 text-center text-red-600", children: errorMessage }) }) : visibleData.length === 0 ? /* @__PURE__ */ jsx("tr", { children: /* @__PURE__ */ jsx("td", { colSpan: (enableSelection ? 1 : 0) + columns.length, className: "py-4 text-center", children: t("table.noData") }) }) : visibleData.map((row, r) => /* @__PURE__ */ jsxs("tr", { className: "border-b", children: [
+          enableSelection && /* @__PURE__ */ jsx("td", { className: "px-4 py-3", children: /* @__PURE__ */ jsx(
+            "input",
+            {
+              type: "checkbox",
+              "aria-label": `Select row ${r + 1}`,
+              checked: selected.has(r),
+              onChange: () => toggleRowSelection(r)
+            }
+          ) }),
+          columns.map((col, c) => {
+            var _a2;
+            let content;
+            if (Array.isArray(col.key)) {
+              const vals = col.key.map((k) => {
+                var _a3;
+                return (_a3 = row[k]) != null ? _a3 : "";
+              });
+              const display = vals.join(" - ");
+              content = col.render ? col.render(vals, row, setPopover) : display;
+            } else {
+              const val = row[col.key];
+              const display = String(val != null ? val : "");
+              if (enableInlineEdit && col.editable) {
+                content = /* @__PURE__ */ jsx(
+                  InlineEditableCell,
+                  {
+                    value: val,
+                    row,
+                    rowIndex: r,
+                    columnKey: col.key,
+                    onCommit: (next) => onCellEdit == null ? void 0 : onCellEdit(r, col.key, next, row),
+                    editor: col.editor,
+                    className: col.cellClassName,
+                    children: col.render ? col.render(val, row, setPopover) : display
+                  }
+                );
+              } else {
+                content = col.render ? col.render(val, row, setPopover) : display;
+              }
+            }
+            return /* @__PURE__ */ jsx("td", { className: `px-4 py-3 ltr:text-left rtl:text-right ${(_a2 = col.cellClassName) != null ? _a2 : ""}`, children: content }, c);
+          })
+        ] }, r)) })
       ] }) }),
       pagination && /* @__PURE__ */ jsxs(
         "nav",
@@ -1119,9 +1325,9 @@ function TableDataCustomBase({
           "aria-label": "Table navigation",
           children: [
             /* @__PURE__ */ jsx("span", { className: "text-sm font-normal text-gray-500 dark:text-gray-400", children: t("table.pagination.showing", {
-              from: (pagination.currentPage - 1) * ((_a = pagination.pageSize) != null ? _a : 10) + 1,
+              from: (pagination.currentPage - 1) * ((_b = pagination.pageSize) != null ? _b : 10) + 1,
               to: Math.min(
-                pagination.currentPage * ((_b = pagination.pageSize) != null ? _b : 10),
+                pagination.currentPage * ((_c = pagination.pageSize) != null ? _c : 10),
                 pagination.totalItems
               ),
               total: pagination.totalItems

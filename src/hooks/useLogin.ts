@@ -26,20 +26,32 @@ export type UseLoginOptions<TUser = unknown> = {
   schema?: ZodSchema<LoginCredentials>;
 };
 
+export type UseLoginReturn<TUser = unknown> = {
+  values: LoginCredentials;
+  update: <K extends keyof LoginCredentials>(key: K, value: LoginCredentials[K]) => void;
+  submit: () => Promise<LoginResult<TUser>>;
+  loading: boolean;
+  error: string | null;
+  result: LoginResult<TUser> | null;
+};
+
 /**
  * A composable login hook: manages form state, validation, submit, and loading/errors.
  */
-export function useLogin<TUser = unknown>({ login, schema }: UseLoginOptions<TUser>) {
+export function useLogin<TUser = unknown>({
+  login,
+  schema,
+}: UseLoginOptions<TUser>): UseLoginReturn<TUser> {
   const [values, setValues] = useState<LoginCredentials>({ username: '', password: '' });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [result, setResult] = useState<LoginResult<TUser> | null>(null);
 
-  function update<K extends keyof LoginCredentials>(key: K, value: LoginCredentials[K]) {
+  function update<K extends keyof LoginCredentials>(key: K, value: LoginCredentials[K]): void {
     setValues((v) => ({ ...v, [key]: value }));
   }
 
-  async function submit() {
+  async function submit(): Promise<LoginResult<TUser>> {
     setError(null);
     setLoading(true);
     try {
@@ -47,8 +59,9 @@ export function useLogin<TUser = unknown>({ login, schema }: UseLoginOptions<TUs
       const res = await login(input);
       setResult(res);
       return res;
-    } catch (e: any) {
-      setError(e?.message ?? 'Login failed');
+    } catch (e: unknown) {
+      const message = e instanceof Error ? e.message : 'Login failed';
+      setError(message);
       throw e;
     } finally {
       setLoading(false);

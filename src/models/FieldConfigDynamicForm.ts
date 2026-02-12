@@ -1,4 +1,4 @@
-import React from 'react';
+import type { ComponentType } from 'react';
 
 /** The list of supported field types. */
 type FieldType = 'text' | 'number' | 'textarea' | 'select' | 'checkbox' | 'multiSelect' | 'custom';
@@ -27,14 +27,14 @@ export interface FieldConfigDynamicForm {
   /** For select or multiSelect, an array of label/value pairs. */
   options?: FieldOption[];
   /** Default initial value (e.g. '', 0, [], etc.). */
-  defaultValue?: any;
+  defaultValue?: unknown;
   /** For multiSelect or custom logic, an optional URL for searching. */
   /**
    * If `type` is 'custom', you can specify a React component
    * that the form will render. This component should accept
-   * props like { value: any, onChange: (val: any) => void } at minimum.
+   * props like { value: unknown, onChange: (val: unknown) => void } at minimum.
    */
-  component?: React.ComponentType<any>;
+  component?: ComponentType<Record<string, unknown>>;
   // Add a `step` property for numeric fields
   step?: string;
   /**
@@ -49,5 +49,5 @@ export interface FieldConfigDynamicForm {
   labelClassName?: string;
   inputClassName?: string;
   // add an optional props property:
-  props?: Record<string, any>;
+  props?: Record<string, unknown>;
 }

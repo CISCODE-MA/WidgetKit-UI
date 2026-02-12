@@ -14,7 +14,7 @@ export { default as useLogin } from './hooks/useLogin';
 export { default as useRegister } from './hooks/useRegister';
 export { default as usePasswordReset } from './hooks/usePasswordReset';
 export { useLiveRegion, useFocusTrap } from './hooks/useA11y';
-export { default as useKeyboardNavigation } from './hooks/useKeyboardNavigation';
+export { useKeyboardNavigation } from './hooks/useKeyboardNavigation';
 
 // Types (layout public)
 export type {

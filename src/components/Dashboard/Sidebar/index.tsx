@@ -1,8 +1,6 @@
 import React, { useEffect, useRef, useState, ReactNode } from 'react';
 import { useLocation, NavLink } from 'react-router';
-import SidebarLinkGroup from './SidebarLinkGroup';
 import { SidebarSection } from '../../../models/SidebarItemModel';
-import { useT } from '@ciscode/ui-translate-core';
 
 interface SidebarProps {
   sidebarOpen: boolean;
@@ -11,16 +9,15 @@ interface SidebarProps {
   logo?: ReactNode;
 }
 
-const Sidebar = ({ sidebarOpen, setSidebarOpen, sections, logo }: SidebarProps) => {
+const Sidebar = ({ sidebarOpen, setSidebarOpen, sections, logo }: SidebarProps): JSX.Element => {
   const location = useLocation();
   const { pathname } = location;
-  const t = useT('templateFe');
 
   const trigger = useRef<HTMLButtonElement>(null);
   const sidebar = useRef<HTMLDivElement>(null);
 
   const storedSidebarExpanded = localStorage.getItem('sidebar-expanded');
-  const [sidebarExpanded, setSidebarExpanded] = useState(storedSidebarExpanded === 'true');
+  const [sidebarExpanded] = useState<boolean>(storedSidebarExpanded === 'true');
 
   useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {
@@ -72,7 +69,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen, sections, logo }: SidebarProps) 
       <div className="flex items-center justify-center px-6 py-6">
         <NavLink to="/">
           {logo ? (
-            <>{logo}</>
+            <span className="contents">{logo}</span>
           ) : (
             <div className="flex h-20 w-20 items-center justify-center rounded-full bg-gray-800 text-white text-xs font-semibold tracking-wide">
               APP-LOGO

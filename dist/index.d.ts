@@ -231,6 +231,24 @@ interface ColumnConfigTable<T> {
         anchor: HTMLElement | null;
         content: React.ReactNode;
     }) => void) => React.ReactNode;
+    /** Sorting configuration */
+    sortable?: boolean;
+    sortComparator?: (a: unknown, b: unknown, rowA: T, rowB: T) => number;
+    /** Filtering configuration */
+    filterable?: boolean;
+    filterPredicate?: (value: unknown, row: T, query: string) => boolean;
+    /** Inline editing configuration */
+    editable?: boolean;
+    editor?: (args: {
+        value: unknown;
+        row: T;
+        rowIndex: number;
+        onChange: (next: unknown) => void;
+        onCommit: () => void;
+        onCancel: () => void;
+    }) => React.ReactNode;
+    /** Optional className for the cell */
+    cellClassName?: string;
 }
 
 /**
@@ -253,6 +271,18 @@ interface TableDataCustomProps<T> {
     pagination?: PaginationProps;
     errorMessage?: string | null;
     toolbarItems?: ToolbarItem[];
+    /** Feature toggles */
+    enableSelection?: boolean;
+    enableSorting?: boolean;
+    enableFilter?: boolean;
+    enableInlineEdit?: boolean;
+    /** Filtering (controlled/uncontrolled) */
+    filterQuery?: string;
+    onFilterQueryChange?: (query: string) => void;
+    /** Selection callback */
+    onSelectionChange?: (selectedRows: T[], selectedIndices: number[]) => void;
+    /** Inline cell edit callback */
+    onCellEdit?: (rowIndex: number, columnKey: keyof T, nextValue: unknown, row: T) => void;
 }
 
 /**
@@ -386,6 +416,4 @@ declare function useFocusTrap(active: boolean): {
     ref: React$1.MutableRefObject<HTMLElement | null>;
 };
 
-var undefined$1 = undefined;
-
-export { Breadcrumb, type BreadcrumbProps, type ColumnConfigTable, ControlledZodDynamicForm, type ControlledZodDynamicFormProps, type DashboardProps, type FieldConfigDynamicForm, type LoginCredentials, type LoginResult, type PaginationProps, type PasswordResetInput, type RegisterPayload, type SidebarActionItem, type SidebarExternalLink, type SidebarInternalLink, type SidebarItem$1 as SidebarItem, type SidebarSection, TableDataCustom, type TableDataCustomProps, Template, type TemplateFooterConfig, type TemplateLayoutConfig, type TemplateNavbarBrandConfig, type TemplateNavbarConfig, type TemplateSidebarConfig, type SidebarItem as TemplateSidebarItem, type ToolbarItem, type UseLoginOptions, type UsePasswordResetOptions, type UseRegisterOptions, type VisibilityRule, generatePageNumbers, useColorMode, useFocusTrap, undefined$1 as useKeyboardNavigation, useLiveRegion, useLocalStorage, useLogin, usePasswordReset, useRegister };
+export { Breadcrumb, type BreadcrumbProps, type ColumnConfigTable, ControlledZodDynamicForm, type ControlledZodDynamicFormProps, type DashboardProps, type FieldConfigDynamicForm, type LoginCredentials, type LoginResult, type PaginationProps, type PasswordResetInput, type RegisterPayload, type SidebarActionItem, type SidebarExternalLink, type SidebarInternalLink, type SidebarItem$1 as SidebarItem, type SidebarSection, TableDataCustom, type TableDataCustomProps, Template, type TemplateFooterConfig, type TemplateLayoutConfig, type TemplateNavbarBrandConfig, type TemplateNavbarConfig, type TemplateSidebarConfig, type SidebarItem as TemplateSidebarItem, type ToolbarItem, type UseLoginOptions, type UsePasswordResetOptions, type UseRegisterOptions, type VisibilityRule, generatePageNumbers, useColorMode, useFocusTrap, useLiveRegion, useLocalStorage, useLogin, usePasswordReset, useRegister };

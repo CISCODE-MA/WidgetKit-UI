@@ -2,9 +2,10 @@ import { describe, it, expect, vi } from 'vitest';
 import { render, screen } from '@testing-library/react';
 import TableDataCustom from './TableDataCustom';
 import type { ColumnConfigTable } from '../../models/ColumnConfigTable';
+import type { ReactNode } from 'react';
 
 vi.mock('@ciscode/ui-translate-core', () => ({
-  useT: () => (key: string, vars?: any) => {
+  useT: () => (key: string, vars?: { from?: number; to?: number; total?: number }) => {
     if (key === 'table.noData') return 'No data';
     if (key === 'table.pagination.previous') return 'Previous';
     if (key === 'table.pagination.next') return 'Next';
@@ -12,7 +13,7 @@ vi.mock('@ciscode/ui-translate-core', () => ({
       return `Showing ${vars?.from}-${vars?.to} of ${vars?.total}`;
     return String(key);
   },
-  Trans: ({ children }: any) => children,
+  Trans: ({ children }: { children: ReactNode }) => children,
 }));
 
 // Mock Loader to avoid CSS reliance

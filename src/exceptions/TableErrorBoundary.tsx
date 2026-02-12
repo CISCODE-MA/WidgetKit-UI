@@ -14,15 +14,15 @@ class TableErrorBoundary extends React.Component<
     this.state = { hasError: false };
   }
 
-  static getDerivedStateFromError(_: any) {
+  static getDerivedStateFromError(): TableErrorBoundaryState {
     return { hasError: true };
   }
 
-  componentDidCatch(error: any, errorInfo: any) {
+  componentDidCatch(error: unknown, errorInfo: unknown): void {
     console.error('TableErrorBoundary caught an error:', error, errorInfo);
   }
 
-  render() {
+  render(): React.ReactNode {
     if (this.state.hasError) {
       // You can't use hooks like useT inside a class component,
       // so we wrap it in a functional HOC instead.
@@ -33,7 +33,7 @@ class TableErrorBoundary extends React.Component<
   }
 }
 
-const TranslatedErrorMessage = () => {
+const TranslatedErrorMessage = (): JSX.Element => {
   const t = useT('template-fe');
   return (
     <div className="p-4 text-red-600 bg-red-50 border border-red-300 rounded">

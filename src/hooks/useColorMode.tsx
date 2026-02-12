@@ -6,8 +6,8 @@ import useLocalStorage from './useLocalStorage';
  * Toggles `dark` class on `<body>` when mode is 'dark'.
  * Returns `[colorMode, setColorMode]`.
  */
-const useColorMode = () => {
-  const [colorMode, setColorMode] = useLocalStorage('color-theme', 'light');
+const useColorMode = (): [string, (value: string | ((val: string) => string)) => void] => {
+  const [colorMode, setColorMode] = useLocalStorage<string>('color-theme', 'light');
 
   useEffect(() => {
     const className = 'dark';
