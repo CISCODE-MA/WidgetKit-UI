@@ -1,4 +1,4 @@
-import React from 'react';
+import type { JSX } from 'react';
 import { Trans } from '@ciscode/ui-translate-core';
 
 export interface PaginationProps {
@@ -9,7 +9,7 @@ export interface PaginationProps {
   onPageChange?: (page: number) => void;
 }
 
-function PaginationInfo({ pagination }: { pagination: PaginationProps }) {
+function PaginationInfo({ pagination }: { pagination: PaginationProps }): JSX.Element {
   const from = (pagination.currentPage - 1) * (pagination.pageSize ?? 10) + 1;
   const to = Math.min(pagination.currentPage * (pagination.pageSize ?? 10), pagination.totalItems);
   const total = pagination.totalItems;

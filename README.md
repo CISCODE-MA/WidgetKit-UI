@@ -1,4 +1,4 @@
-# React TypeScript DeveloperKit (Template)
+# @ciscode/ui-widget-kit
 
 Template repository for building reusable React TypeScript **npm libraries**
 (components + hooks + utilities).

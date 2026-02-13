@@ -5,9 +5,14 @@ import { useEffect, useRef } from 'react';
  * Returns a ref to attach to an element with `aria-live="polite"` or `assertive`.
  * Use `announce()` to set text content.
  */
-export function useLiveRegion() {
+export type LiveRegionReturn = {
+  ref: React.MutableRefObject<HTMLElement | null>;
+  announce: (message: string) => void;
+};
+
+export function useLiveRegion(): LiveRegionReturn {
   const ref = useRef<HTMLElement | null>(null);
-  function announce(message: string) {
+  function announce(message: string): void {
     if (ref.current) {
       ref.current.textContent = message;
     }
@@ -19,7 +24,9 @@ export function useLiveRegion() {
  * Trap focus within a container element (e.g., modal) while `active`.
  * Adds keydown handlers to cycle focus.
  */
-export function useFocusTrap(active: boolean) {
+export type FocusTrapReturn = { ref: React.MutableRefObject<HTMLElement | null> };
+
+export function useFocusTrap(active: boolean): FocusTrapReturn {
   const ref = useRef<HTMLElement | null>(null);
 
   useEffect(() => {
@@ -63,5 +70,3 @@ export function useFocusTrap(active: boolean) {
 
   return { ref };
 }
-
-export default undefined;

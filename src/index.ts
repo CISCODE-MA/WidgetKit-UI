@@ -5,6 +5,8 @@ export { default as Template } from './main/dashboard';
 export { default as Breadcrumb } from './components/Breadcrumbs/Breadcrumb';
 export { default as ControlledZodDynamicForm } from './components/Form/ZodDynamicForm';
 export { default as TableDataCustom } from './components/Table/TableDataCustom';
+export { default as DashboardGrid } from './components/Dashboard/Widgets/DashboardGrid';
+export { DefaultChartAdapter } from './components/Dashboard/Widgets/ChartAdapters';
 
 // Hooks (public)
 export { default as useLocalStorage } from './hooks/useLocalStorage';
@@ -14,7 +16,7 @@ export { default as useLogin } from './hooks/useLogin';
 export { default as useRegister } from './hooks/useRegister';
 export { default as usePasswordReset } from './hooks/usePasswordReset';
 export { useLiveRegion, useFocusTrap } from './hooks/useA11y';
-export { default as useKeyboardNavigation } from './hooks/useKeyboardNavigation';
+export { useKeyboardNavigation } from './hooks/useKeyboardNavigation';
 
 // Types (layout public)
 export type {
@@ -35,6 +37,15 @@ export type { ColumnConfigTable } from './models/ColumnConfigTable';
 export type { FieldConfigDynamicForm } from './models/FieldConfigDynamicForm';
 export type { ToolbarItem } from './models/ToolbarItemModel';
 export type { SidebarItem, SidebarSection } from './models/SidebarItemModel';
+export type {
+  DashboardLayout,
+  GridConfig,
+  WidgetPosition,
+  WidgetType,
+  BaseWidgetConfig,
+  ChartAdapter,
+  ChartKind,
+} from './models/DashboardWidget';
 
 // Types (component props)
 export type { BreadcrumbProps } from './components/Breadcrumbs/Breadcrumb';

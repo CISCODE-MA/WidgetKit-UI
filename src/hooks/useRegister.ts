@@ -14,20 +14,32 @@ export type UseRegisterOptions<TUser = unknown> = {
   schema?: ZodSchema<RegisterPayload>;
 };
 
+export type UseRegisterReturn<TUser = unknown> = {
+  values: RegisterPayload;
+  update: <K extends string>(key: K, value: unknown) => void;
+  submit: () => Promise<TUser>;
+  loading: boolean;
+  error: string | null;
+  user: TUser | null;
+};
+
 /**
  * A composable registration hook: manages form state, validation, submit, and loading/errors.
  */
-export function useRegister<TUser = unknown>({ register, schema }: UseRegisterOptions<TUser>) {
+export function useRegister<TUser = unknown>({
+  register,
+  schema,
+}: UseRegisterOptions<TUser>): UseRegisterReturn<TUser> {
   const [values, setValues] = useState<RegisterPayload>({});
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [user, setUser] = useState<TUser | null>(null);
 
-  function update<K extends string>(key: K, value: unknown) {
+  function update<K extends string>(key: K, value: unknown): void {
     setValues((v) => ({ ...v, [key]: value }));
   }
 
-  async function submit() {
+  async function submit(): Promise<TUser> {
     setError(null);
     setLoading(true);
     try {
@@ -35,8 +47,9 @@ export function useRegister<TUser = unknown>({ register, schema }: UseRegisterOp
       const res = await register(payload);
       setUser(res);
       return res;
-    } catch (e: any) {
-      setError(e?.message ?? 'Registration failed');
+    } catch (e: unknown) {
+      const message = e instanceof Error ? e.message : 'Registration failed';
+      setError(message);
       throw e;
     } finally {
       setLoading(false);

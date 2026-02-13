@@ -1,4 +1,6 @@
-import React, { useState, useEffect, ReactNode } from 'react';
+import type { JSX } from 'react';
+import { useState, useEffect } from 'react';
+import type { ReactNode } from 'react';
 import { useLocation } from 'react-router';
 import DashboardLayout from '../layout/DashboardLayout';
 import Loader from '../common/Loader';
@@ -48,15 +50,14 @@ export interface DashboardProps {
  * Preferred:
  * - New apps should use: sidebar + navbar (+ footer when needed)
  */
-const Template: React.FC<DashboardProps> = ({
+function Template({
   children,
   sidebarContent = [],
   logo,
   onLogout,
-  sidebar,
   navbar,
   footer,
-}) => {
+}: DashboardProps): JSX.Element {
   const [loading, setLoading] = useState<boolean>(true);
   const { pathname } = useLocation();
 
@@ -110,6 +111,6 @@ const Template: React.FC<DashboardProps> = ({
       {children}
     </DashboardLayout>
   );
-};
+}
 
 export default Template;

@@ -1,3 +1,4 @@
+import type { JSX } from 'react';
 import DropdownMessage from './DropdownMessage';
 import DropdownNotification from './DropdownNotification';
 import DropdownUser from './DropdownUser';
@@ -10,7 +11,7 @@ const Header = (props: {
   sidebarOpen: string | boolean | undefined;
   setSidebarOpen: (arg0: boolean) => void;
   onLogout?: () => void;
-}) => {
+}): JSX.Element => {
   const t = useT('templateFe');
   console.log('HEADER onLogout prop =', props.onLogout);
 
