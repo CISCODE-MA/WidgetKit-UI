@@ -1,6 +1,4 @@
-import * as React$1 from 'react';
-import React__default, { ReactNode } from 'react';
-import * as react_jsx_runtime from 'react/jsx-runtime';
+import React$1, { ReactNode, ComponentType } from 'react';
 import { ZodSchema } from 'zod';
 
 /** Each item within a section */
@@ -135,7 +133,7 @@ interface DashboardProps {
  * Preferred:
  * - New apps should use: sidebar + navbar (+ footer when needed)
  */
-declare const Template: React__default.FC<DashboardProps>;
+declare function Template({ children, sidebarContent, logo, onLogout, navbar, footer, }: DashboardProps): JSX.Element;
 
 /**
  * Props for `Breadcrumb` component.
@@ -148,7 +146,7 @@ interface BreadcrumbProps {
  * Accessible breadcrumb navigation.
  * Renders a current page label and a link to home.
  */
-declare const Breadcrumb: React__default.FC<BreadcrumbProps>;
+declare const Breadcrumb: React$1.FC<BreadcrumbProps>;
 
 /** The list of supported field types. */
 type FieldType = 'text' | 'number' | 'textarea' | 'select' | 'checkbox' | 'multiSelect' | 'custom';
@@ -175,14 +173,14 @@ interface FieldConfigDynamicForm {
     /** For select or multiSelect, an array of label/value pairs. */
     options?: FieldOption[];
     /** Default initial value (e.g. '', 0, [], etc.). */
-    defaultValue?: any;
+    defaultValue?: unknown;
     /** For multiSelect or custom logic, an optional URL for searching. */
     /**
      * If `type` is 'custom', you can specify a React component
      * that the form will render. This component should accept
-     * props like { value: any, onChange: (val: any) => void } at minimum.
+     * props like { value: unknown, onChange: (val: unknown) => void } at minimum.
      */
-    component?: React__default.ComponentType<any>;
+    component?: ComponentType<Record<string, unknown>>;
     step?: string;
     /**
      * Tailwind classes for the field wrapper (the <div>).
@@ -194,19 +192,19 @@ interface FieldConfigDynamicForm {
      */
     labelClassName?: string;
     inputClassName?: string;
-    props?: Record<string, any>;
+    props?: Record<string, unknown>;
 }
 
 interface ControlledZodDynamicFormProps {
-    schema: ZodSchema<any>;
+    schema: ZodSchema<Record<string, unknown>>;
     fields: FieldConfigDynamicForm[];
-    values: Record<string, any>;
-    onChangeField: (fieldName: string, newValue: any) => void;
-    onSubmit: (parsedValues: Record<string, any>) => void;
+    values: Record<string, unknown>;
+    onChangeField: (fieldName: string, newValue: unknown) => void;
+    onSubmit: (parsedValues: Record<string, unknown>) => void;
     submitLabel?: string;
-    header?: React__default.ReactNode;
+    header?: ReactNode;
 }
-declare function ControlledZodDynamicForm({ schema, fields, values, onChangeField, onSubmit, submitLabel, header, }: ControlledZodDynamicFormProps): react_jsx_runtime.JSX.Element;
+declare function ControlledZodDynamicForm({ schema, fields, values, onChangeField, onSubmit, submitLabel, header, }: ControlledZodDynamicFormProps): JSX.Element;
 
 interface ToolbarItem {
     /** Whether to show/hide the item. Default is true. */
@@ -217,7 +215,7 @@ interface ToolbarItem {
      */
     position?: 'left' | 'right';
     /** The React node to render. e.g. a search input, a button, etc. */
-    node: React__default.ReactNode;
+    node: React$1.ReactNode;
 }
 
 interface ColumnConfigTable<T> {
@@ -290,7 +288,47 @@ interface TableDataCustomProps<T> {
  * Wraps `TableDataCustomBase` in `TableErrorBoundary` to provide a safe fallback.
  * Consumers should import `TableDataCustom` from the package root.
  */
-declare function TableDataCustom<T>(props: TableDataCustomProps<T>): react_jsx_runtime.JSX.Element;
+declare function TableDataCustom<T>(props: TableDataCustomProps<T>): JSX.Element;
+
+type WidgetType = 'card' | 'stat' | 'progress' | 'activity' | 'chart' | 'custom';
+type WidgetId = string;
+type WidgetPosition = {
+    x: number;
+    y: number;
+    w: number;
+    h: number;
+};
+type BaseWidgetConfig = {
+    id: WidgetId;
+    type: WidgetType;
+    title?: string;
+    position: WidgetPosition;
+    props?: Record<string, unknown>;
+};
+type DashboardLayout = BaseWidgetConfig[];
+type GridConfig = {
+    cols: number;
+    rowHeight: number;
+    gap: number;
+};
+type ChartKind = 'line' | 'bar' | 'pie';
+type ChartAdapter = {
+    render: (kind: ChartKind, props: Record<string, unknown>) => JSX.Element;
+};
+
+type Props = {
+    grid: GridConfig;
+    widgets: DashboardLayout;
+    onLayoutChange?: (next: DashboardLayout) => void;
+    renderWidget?: (w: BaseWidgetConfig) => JSX.Element;
+    chartAdapter?: ChartAdapter;
+    enableDrag?: boolean;
+    enableResize?: boolean;
+    showActions?: boolean;
+};
+declare function DashboardGrid({ grid, widgets, onLayoutChange, renderWidget, chartAdapter, enableDrag, enableResize, showActions }: Props): JSX.Element;
+
+declare const DefaultChartAdapter: ChartAdapter;
 
 /**
  * Setter type used by `useLocalStorage`.
@@ -308,7 +346,7 @@ declare function useLocalStorage<T>(key: string, initialValue: T): [T, (value: S
  * Toggles `dark` class on `<body>` when mode is 'dark'.
  * Returns `[colorMode, setColorMode]`.
  */
-declare const useColorMode: () => (string | ((value: SetValue<string>) => void))[];
+declare const useColorMode: () => [string, (value: string | ((val: string) => string)) => void];
 
 /**
  * Generate a compact page list for pagination controls.
@@ -338,10 +376,7 @@ type UseLoginOptions<TUser = unknown> = {
     login: (credentials: LoginCredentials) => Promise<LoginResult<TUser>>;
     schema?: ZodSchema<LoginCredentials>;
 };
-/**
- * A composable login hook: manages form state, validation, submit, and loading/errors.
- */
-declare function useLogin<TUser = unknown>({ login, schema }: UseLoginOptions<TUser>): {
+type UseLoginReturn<TUser = unknown> = {
     values: LoginCredentials;
     update: <K extends keyof LoginCredentials>(key: K, value: LoginCredentials[K]) => void;
     submit: () => Promise<LoginResult<TUser>>;
@@ -349,6 +384,10 @@ declare function useLogin<TUser = unknown>({ login, schema }: UseLoginOptions<TU
     error: string | null;
     result: LoginResult<TUser> | null;
 };
+/**
+ * A composable login hook: manages form state, validation, submit, and loading/errors.
+ */
+declare function useLogin<TUser = unknown>({ login, schema, }: UseLoginOptions<TUser>): UseLoginReturn<TUser>;
 
 /**
  * Generic registration payload.
@@ -361,10 +400,7 @@ type UseRegisterOptions<TUser = unknown> = {
     register: (payload: RegisterPayload) => Promise<TUser>;
     schema?: ZodSchema<RegisterPayload>;
 };
-/**
- * A composable registration hook: manages form state, validation, submit, and loading/errors.
- */
-declare function useRegister<TUser = unknown>({ register, schema }: UseRegisterOptions<TUser>): {
+type UseRegisterReturn<TUser = unknown> = {
     values: RegisterPayload;
     update: <K extends string>(key: K, value: unknown) => void;
     submit: () => Promise<TUser>;
@@ -372,6 +408,10 @@ declare function useRegister<TUser = unknown>({ register, schema }: UseRegisterO
     error: string | null;
     user: TUser | null;
 };
+/**
+ * A composable registration hook: manages form state, validation, submit, and loading/errors.
+ */
+declare function useRegister<TUser = unknown>({ register, schema, }: UseRegisterOptions<TUser>): UseRegisterReturn<TUser>;
 
 /**
  * Password reset input: allow email or username.
@@ -387,10 +427,7 @@ type UsePasswordResetOptions = {
     reset: (input: PasswordResetInput) => Promise<void>;
     schema?: ZodSchema<PasswordResetInput>;
 };
-/**
- * A composable password reset hook: manages form state, validation, submit, and loading/errors.
- */
-declare function usePasswordReset({ reset, schema }: UsePasswordResetOptions): {
+type UsePasswordResetReturn = {
     values: PasswordResetInput;
     update: <K extends keyof PasswordResetInput>(key: K, value: PasswordResetInput[K]) => void;
     submit: () => Promise<void>;
@@ -398,22 +435,40 @@ declare function usePasswordReset({ reset, schema }: UsePasswordResetOptions): {
     error: string | null;
     success: boolean;
 };
+/**
+ * A composable password reset hook: manages form state, validation, submit, and loading/errors.
+ */
+declare function usePasswordReset({ reset, schema, }: UsePasswordResetOptions): UsePasswordResetReturn;
 
 /**
  * Manage ARIA live region announcements.
  * Returns a ref to attach to an element with `aria-live="polite"` or `assertive`.
  * Use `announce()` to set text content.
  */
-declare function useLiveRegion(): {
-    ref: React$1.MutableRefObject<HTMLElement | null>;
+type LiveRegionReturn = {
+    ref: React.MutableRefObject<HTMLElement | null>;
     announce: (message: string) => void;
 };
+declare function useLiveRegion(): LiveRegionReturn;
 /**
  * Trap focus within a container element (e.g., modal) while `active`.
  * Adds keydown handlers to cycle focus.
  */
-declare function useFocusTrap(active: boolean): {
-    ref: React$1.MutableRefObject<HTMLElement | null>;
+type FocusTrapReturn = {
+    ref: React.MutableRefObject<HTMLElement | null>;
 };
+declare function useFocusTrap(active: boolean): FocusTrapReturn;
 
-export { Breadcrumb, type BreadcrumbProps, type ColumnConfigTable, ControlledZodDynamicForm, type ControlledZodDynamicFormProps, type DashboardProps, type FieldConfigDynamicForm, type LoginCredentials, type LoginResult, type PaginationProps, type PasswordResetInput, type RegisterPayload, type SidebarActionItem, type SidebarExternalLink, type SidebarInternalLink, type SidebarItem$1 as SidebarItem, type SidebarSection, TableDataCustom, type TableDataCustomProps, Template, type TemplateFooterConfig, type TemplateLayoutConfig, type TemplateNavbarBrandConfig, type TemplateNavbarConfig, type TemplateSidebarConfig, type SidebarItem as TemplateSidebarItem, type ToolbarItem, type UseLoginOptions, type UsePasswordResetOptions, type UseRegisterOptions, type VisibilityRule, generatePageNumbers, useColorMode, useFocusTrap, useLiveRegion, useLocalStorage, useLogin, usePasswordReset, useRegister };
+type RovingConfig = {
+    /** CSS selector for focusable items inside the container */
+    selector: string;
+    /** Optional: initial index to focus when mounted */
+    initialIndex?: number;
+};
+/**
+ * Roving tabindex keyboard navigation for lists/menus.
+ * Attach to a container element; items should be focusable via `tabindex`.
+ */
+declare function useKeyboardNavigation(container: HTMLElement | null, { selector, initialIndex }: RovingConfig): void;
+
+export { type BaseWidgetConfig, Breadcrumb, type BreadcrumbProps, type ChartAdapter, type ChartKind, type ColumnConfigTable, ControlledZodDynamicForm, type ControlledZodDynamicFormProps, DashboardGrid, type DashboardLayout, type DashboardProps, DefaultChartAdapter, type FieldConfigDynamicForm, type GridConfig, type LoginCredentials, type LoginResult, type PaginationProps, type PasswordResetInput, type RegisterPayload, type SidebarActionItem, type SidebarExternalLink, type SidebarInternalLink, type SidebarItem$1 as SidebarItem, type SidebarSection, TableDataCustom, type TableDataCustomProps, Template, type TemplateFooterConfig, type TemplateLayoutConfig, type TemplateNavbarBrandConfig, type TemplateNavbarConfig, type TemplateSidebarConfig, type SidebarItem as TemplateSidebarItem, type ToolbarItem, type UseLoginOptions, type UsePasswordResetOptions, type UseRegisterOptions, type VisibilityRule, type WidgetPosition, type WidgetType, generatePageNumbers, useColorMode, useFocusTrap, useKeyboardNavigation, useLiveRegion, useLocalStorage, useLogin, usePasswordReset, useRegister };

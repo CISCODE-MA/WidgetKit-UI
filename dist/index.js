@@ -1,4 +1,4 @@
-import React10, { useState, useEffect, useRef, useCallback, useMemo } from 'react';
+import React4, { useState, useEffect, useRef, useCallback, useMemo } from 'react';
 import { useLocation, NavLink, Link as Link$1 } from 'react-router';
 import { jsx, jsxs, Fragment } from 'react/jsx-runtime';
 import { useT } from '@ciscode/ui-translate-core';
@@ -46,7 +46,7 @@ var __async = (__this, __arguments, generator) => {
     step((generator = generator.apply(__this, __arguments)).next());
   });
 };
-var ClickOutside = ({ children, exceptionRef, onClick, className }) => {
+function ClickOutside({ children, exceptionRef, onClick, className }) {
   const wrapperRef = useRef(null);
   useEffect(() => {
     const handleClickListener = (event) => {
@@ -64,7 +64,7 @@ var ClickOutside = ({ children, exceptionRef, onClick, className }) => {
     };
   }, [exceptionRef, onClick]);
   return /* @__PURE__ */ jsx("div", { ref: wrapperRef, className: `${className || ""}`, children });
-};
+}
 var ClickOutside_default = ClickOutside;
 var DropdownMessage = () => {
   const [dropdownOpen, setDropdownOpen] = useState(false);
@@ -570,11 +570,10 @@ var Header_default = Header;
 var Sidebar = ({ sidebarOpen, setSidebarOpen, sections, logo }) => {
   const location = useLocation();
   const { pathname } = location;
-  useT("templateFe");
   const trigger = useRef(null);
   const sidebar = useRef(null);
   const storedSidebarExpanded = localStorage.getItem("sidebar-expanded");
-  const [sidebarExpanded, setSidebarExpanded] = useState(storedSidebarExpanded === "true");
+  const [sidebarExpanded] = useState(storedSidebarExpanded === "true");
   useEffect(() => {
     const handleClickOutside = (e) => {
       if (!sidebar.current || !trigger.current) return;
@@ -618,7 +617,7 @@ var Sidebar = ({ sidebarOpen, setSidebarOpen, sections, logo }) => {
       `,
       children: [
         /* @__PURE__ */ jsxs("div", { className: "flex items-center justify-center px-6 py-6", children: [
-          /* @__PURE__ */ jsx(NavLink, { to: "/", children: logo ? /* @__PURE__ */ jsx(Fragment, { children: logo }) : /* @__PURE__ */ jsx("div", { className: "flex h-20 w-20 items-center justify-center rounded-full bg-gray-800 text-white text-xs font-semibold tracking-wide", children: "APP-LOGO" }) }),
+          /* @__PURE__ */ jsx(NavLink, { to: "/", children: logo ? /* @__PURE__ */ jsx("span", { className: "contents", children: logo }) : /* @__PURE__ */ jsx("div", { className: "flex h-20 w-20 items-center justify-center rounded-full bg-gray-800 text-white text-xs font-semibold tracking-wide", children: "APP-LOGO" }) }),
           /* @__PURE__ */ jsx(
             "button",
             {
@@ -708,7 +707,7 @@ var DashboardLayout = ({
             }) }) : null,
             ((_e = footer == null ? void 0 : footer.preset) == null ? void 0 : _e.version) ? /* @__PURE__ */ jsx("span", { className: "ciscod-footer__version", children: footer.preset.version }) : null
           ] })
-        ] }) }) }) : hasBlocks ? /* @__PURE__ */ jsx("footer", { className: ["ciscod-footer", (_f = footer == null ? void 0 : footer.className) != null ? _f : ""].join(" "), children: /* @__PURE__ */ jsx("div", { className: "ciscod-footer__inner", children: /* @__PURE__ */ jsx("div", { className: "ciscod-footer__content", children: footer.blocks.map((block, idx) => /* @__PURE__ */ jsx(React10.Fragment, { children: block }, idx)) }) }) }) : null
+        ] }) }) }) : hasBlocks ? /* @__PURE__ */ jsx("footer", { className: ["ciscod-footer", (_f = footer == null ? void 0 : footer.className) != null ? _f : ""].join(" "), children: /* @__PURE__ */ jsx("div", { className: "ciscod-footer__inner", children: /* @__PURE__ */ jsx("div", { className: "ciscod-footer__content", children: footer.blocks.map((block, idx) => /* @__PURE__ */ jsx(React4.Fragment, { children: block }, idx)) }) }) }) : null
       ] })
     ] })
   ] }) });
@@ -718,15 +717,14 @@ var Loader = () => {
   return /* @__PURE__ */ jsx("div", { className: "flex h-screen items-center justify-center bg-white", children: /* @__PURE__ */ jsx("div", { className: "h-16 w-16 animate-spin rounded-full border-4 border-solid border-blue-700 border-t-transparent" }) });
 };
 var Loader_default = Loader;
-var Template = ({
+function Template({
   children,
   sidebarContent = [],
   logo,
   onLogout,
-  sidebar,
   navbar,
   footer
-}) => {
+}) {
   var _a, _b, _c, _d, _e, _f;
   const [loading, setLoading] = useState(true);
   const { pathname } = useLocation();
@@ -755,7 +753,7 @@ var Template = ({
       children
     }
   );
-};
+}
 var dashboard_default = Template;
 var Breadcrumb = ({ pageName }) => {
   const t = useT("templateFe");
@@ -832,7 +830,7 @@ function ControlledZodDynamicForm({
                   id: field.name,
                   name: field.name,
                   placeholder: field.placeholder,
-                  value: fieldValue,
+                  value: typeof fieldValue === "string" ? fieldValue : String(fieldValue != null ? fieldValue : ""),
                   onChange: handleInputChange,
                   className: "border border-gray-300 rounded-lg px-3 py-2 w-full ltr:text-left rtl:text-right"
                 }
@@ -843,7 +841,7 @@ function ControlledZodDynamicForm({
                 {
                   id: field.name,
                   name: field.name,
-                  value: fieldValue,
+                  value: typeof fieldValue === "string" || typeof fieldValue === "number" ? fieldValue : "",
                   onChange: handleInputChange,
                   className: "border border-gray-300 rounded-lg px-3 py-2 w-full ltr:text-left rtl:text-right",
                   children: [
@@ -916,7 +914,7 @@ function ControlledZodDynamicForm({
                   type: field.type === "number" ? "number" : "text",
                   step: field.step || "1",
                   placeholder: field.placeholder,
-                  value: fieldValue,
+                  value: field.type === "number" ? typeof fieldValue === "number" ? fieldValue : Number(fieldValue) || 0 : typeof fieldValue === "string" ? fieldValue : String(fieldValue != null ? fieldValue : ""),
                   onChange: handleInputChange,
                   className: "border border-gray-300 rounded-lg px-3 py-2 w-full ltr:text-left rtl:text-right"
                 }
@@ -953,12 +951,12 @@ function findNestedErrors(allErrors, rootField) {
   }
   return nested;
 }
-var TableErrorBoundary = class extends React10.Component {
+var TableErrorBoundary = class extends React4.Component {
   constructor(props) {
     super(props);
     this.state = { hasError: false };
   }
-  static getDerivedStateFromError(_) {
+  static getDerivedStateFromError() {
     return { hasError: true };
   }
   componentDidCatch(error, errorInfo) {
@@ -1142,16 +1140,13 @@ function TableDataCustomBase({
   const [popover, setPopover] = useState(null);
   const closePopover = useCallback(() => setPopover(null), []);
   const [selected, setSelected] = useState(/* @__PURE__ */ new Set());
-  const toggleSelectAll = useCallback(
-    (checked, count) => {
-      const next = /* @__PURE__ */ new Set();
-      if (checked) {
-        for (let i = 0; i < count; i++) next.add(i);
-      }
-      setSelected(next);
-    },
-    []
-  );
+  const toggleSelectAll = useCallback((checked, count) => {
+    const next = /* @__PURE__ */ new Set();
+    if (checked) {
+      for (let i = 0; i < count; i++) next.add(i);
+    }
+    setSelected(next);
+  }, []);
   const toggleRowSelection = useCallback((index) => {
     setSelected((prev) => {
       const next = new Set(prev);
@@ -1215,18 +1210,18 @@ function TableDataCustomBase({
     }
     return rows;
   }, [data, columns, enableFilter, activeQuery, enableSorting, sortBy, sortDir]);
-  React10.useEffect(() => {
+  React4.useEffect(() => {
     if (!onSelectionChange) return;
     const indices = Array.from(selected.values()).sort((a, b) => a - b);
     const rows = indices.map((i) => visibleData[i]).filter(Boolean);
     onSelectionChange(rows, indices);
   }, [selected, visibleData, onSelectionChange]);
-  return /* @__PURE__ */ jsx(Fragment, { children: /* @__PURE__ */ jsxs("section", { children: [
+  return /* @__PURE__ */ jsxs("section", { children: [
     popover && /* @__PURE__ */ jsx(TablePopover, { anchor: popover.anchor, onClose: closePopover, children: popover.content }),
     /* @__PURE__ */ jsx("div", { className: "mx-auto", children: /* @__PURE__ */ jsxs("div", { className: "relative overflow-hidden bg-white shadow-md dark:bg-gray-800 sm:rounded-lg", children: [
       (leftItems.length > 0 || rightItems.length > 0 || enableFilter) && /* @__PURE__ */ jsxs("div", { className: "flex flex-col px-4 py-3 space-y-3 lg:flex-row lg:items-center lg:justify-between lg:space-y-0 ltr:lg:space-x-4 rtl:lg:space-x-reverse", children: [
         /* @__PURE__ */ jsxs("div", { className: "flex items-center flex-wrap gap-3", children: [
-          leftItems.map((it, i) => /* @__PURE__ */ jsx(React10.Fragment, { children: it.node }, i)),
+          leftItems.map((it, i) => /* @__PURE__ */ jsx("span", { className: "contents", children: it.node }, i)),
           enableFilter && /* @__PURE__ */ jsx(
             "input",
             {
@@ -1238,7 +1233,7 @@ function TableDataCustomBase({
             }
           )
         ] }),
-        /* @__PURE__ */ jsx("div", { className: "flex items-center flex-wrap gap-3", children: rightItems.map((it, i) => /* @__PURE__ */ jsx(React10.Fragment, { children: it.node }, i)) })
+        /* @__PURE__ */ jsx("div", { className: "flex items-center flex-wrap gap-3", children: rightItems.map((it, i) => /* @__PURE__ */ jsx("span", { className: "contents", children: it.node }, i)) })
       ] }),
       /* @__PURE__ */ jsx("div", { className: "overflow-x-auto", children: /* @__PURE__ */ jsxs("table", { className: "w-full text-sm text-gray-500 dark:text-gray-400 ltr:text-left rtl:text-right", children: [
         /* @__PURE__ */ jsx("thead", { className: "text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400", children: /* @__PURE__ */ jsxs("tr", { children: [
@@ -1259,21 +1254,34 @@ function TableDataCustomBase({
               title: enableSorting && col.sortable !== false ? "Sort" : void 0,
               children: /* @__PURE__ */ jsxs("span", { className: "inline-flex items-center gap-1", children: [
                 col.title,
-                enableSorting && sortBy === i && /* @__PURE__ */ jsx(
-                  "svg",
-                  {
-                    className: "w-3 h-3",
-                    fill: "currentColor",
-                    viewBox: "0 0 20 20",
-                    children: sortDir === "asc" ? /* @__PURE__ */ jsx("path", { d: "M10 5l-5 6h10L10 5z" }) : /* @__PURE__ */ jsx("path", { d: "M10 15l5-6H5l5 6z" })
-                  }
-                )
+                enableSorting && sortBy === i && /* @__PURE__ */ jsx("svg", { className: "w-3 h-3", fill: "currentColor", viewBox: "0 0 20 20", children: sortDir === "asc" ? /* @__PURE__ */ jsx("path", { d: "M10 5l-5 6h10L10 5z" }) : /* @__PURE__ */ jsx("path", { d: "M10 15l5-6H5l5 6z" }) })
               ] })
             },
             i
           ))
         ] }) }),
-        /* @__PURE__ */ jsx("tbody", { children: loading ? /* @__PURE__ */ jsx("tr", { children: /* @__PURE__ */ jsx("td", { colSpan: (enableSelection ? 1 : 0) + columns.length, className: "py-4 text-center", children: /* @__PURE__ */ jsx(TableLoader, {}) }) }) : errorMessage ? /* @__PURE__ */ jsx("tr", { children: /* @__PURE__ */ jsx("td", { colSpan: (enableSelection ? 1 : 0) + columns.length, className: "py-4 text-center text-red-600", children: errorMessage }) }) : visibleData.length === 0 ? /* @__PURE__ */ jsx("tr", { children: /* @__PURE__ */ jsx("td", { colSpan: (enableSelection ? 1 : 0) + columns.length, className: "py-4 text-center", children: t("table.noData") }) }) : visibleData.map((row, r) => /* @__PURE__ */ jsxs("tr", { className: "border-b", children: [
+        /* @__PURE__ */ jsx("tbody", { children: loading ? /* @__PURE__ */ jsx("tr", { children: /* @__PURE__ */ jsx(
+          "td",
+          {
+            colSpan: (enableSelection ? 1 : 0) + columns.length,
+            className: "py-4 text-center",
+            children: /* @__PURE__ */ jsx(TableLoader, {})
+          }
+        ) }) : errorMessage ? /* @__PURE__ */ jsx("tr", { children: /* @__PURE__ */ jsx(
+          "td",
+          {
+            colSpan: (enableSelection ? 1 : 0) + columns.length,
+            className: "py-4 text-center text-red-600",
+            children: errorMessage
+          }
+        ) }) : visibleData.length === 0 ? /* @__PURE__ */ jsx("tr", { children: /* @__PURE__ */ jsx(
+          "td",
+          {
+            colSpan: (enableSelection ? 1 : 0) + columns.length,
+            className: "py-4 text-center",
+            children: t("table.noData")
+          }
+        ) }) : visibleData.map((row, r) => /* @__PURE__ */ jsxs("tr", { className: "border-b", children: [
           enableSelection && /* @__PURE__ */ jsx("td", { className: "px-4 py-3", children: /* @__PURE__ */ jsx(
             "input",
             {
@@ -1314,7 +1322,14 @@ function TableDataCustomBase({
                 content = col.render ? col.render(val, row, setPopover) : display;
               }
             }
-            return /* @__PURE__ */ jsx("td", { className: `px-4 py-3 ltr:text-left rtl:text-right ${(_a2 = col.cellClassName) != null ? _a2 : ""}`, children: content }, c);
+            return /* @__PURE__ */ jsx(
+              "td",
+              {
+                className: `px-4 py-3 ltr:text-left rtl:text-right ${(_a2 = col.cellClassName) != null ? _a2 : ""}`,
+                children: content
+              },
+              c
+            );
           })
         ] }, r)) })
       ] }) }),
@@ -1344,22 +1359,14 @@ function TableDataCustomBase({
                   className: "flex items-center justify-center h-full py-1.5 px-3 ml-0 text-gray-500 bg-white rounded-l-lg border border-gray-300 hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white",
                   children: [
                     /* @__PURE__ */ jsx("span", { className: "sr-only", children: t("table.pagination.previous") }),
-                    /* @__PURE__ */ jsx(
-                      "svg",
+                    /* @__PURE__ */ jsx("svg", { className: "w-5 h-5 rtl:rotate-180", fill: "currentColor", viewBox: "0 0 20 20", children: /* @__PURE__ */ jsx(
+                      "path",
                       {
-                        className: "w-5 h-5 rtl:rotate-180",
-                        fill: "currentColor",
-                        viewBox: "0 0 20 20",
-                        children: /* @__PURE__ */ jsx(
-                          "path",
-                          {
-                            fillRule: "evenodd",
-                            clipRule: "evenodd",
-                            d: document.dir === "rtl" ? "M7.293 14.707a1 1 0 010-1.414L10.586 10l-3.293-3.293a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" : "M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z"
-                          }
-                        )
+                        fillRule: "evenodd",
+                        clipRule: "evenodd",
+                        d: document.dir === "rtl" ? "M7.293 14.707a1 1 0 010-1.414L10.586 10l-3.293-3.293a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" : "M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z"
                       }
-                    )
+                    ) })
                   ]
                 }
               ) }),
@@ -1387,22 +1394,14 @@ function TableDataCustomBase({
                   className: "flex items-center justify-center h-full py-1.5 px-3 leading-tight text-gray-500 bg-white rounded-r-lg border border-gray-300 hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white",
                   children: [
                     /* @__PURE__ */ jsx("span", { className: "sr-only", children: t("table.pagination.next") }),
-                    /* @__PURE__ */ jsx(
-                      "svg",
+                    /* @__PURE__ */ jsx("svg", { className: "w-5 h-5 rtl:rotate-180", fill: "currentColor", viewBox: "0 0 20 20", children: /* @__PURE__ */ jsx(
+                      "path",
                       {
-                        className: "w-5 h-5 rtl:rotate-180",
-                        fill: "currentColor",
-                        viewBox: "0 0 20 20",
-                        children: /* @__PURE__ */ jsx(
-                          "path",
-                          {
-                            fillRule: "evenodd",
-                            clipRule: "evenodd",
-                            d: document.dir === "rtl" ? "M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z" : "M7.293 14.707a1 1 0 010-1.414L10.586 10l-3.293-3.293a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"
-                          }
-                        )
+                        fillRule: "evenodd",
+                        clipRule: "evenodd",
+                        d: document.dir === "rtl" ? "M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z" : "M7.293 14.707a1 1 0 010-1.414L10.586 10l-3.293-3.293a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"
                       }
-                    )
+                    ) })
                   ]
                 }
               ) })
@@ -1411,14 +1410,387 @@ function TableDataCustomBase({
         }
       )
     ] }) })
-  ] }) });
+  ] });
 }
 var TableDataCustomBase_default = TableDataCustomBase;
 function TableDataCustom(props) {
   return /* @__PURE__ */ jsx(TableErrorBoundary_default, { children: /* @__PURE__ */ jsx(TableDataCustomBase_default, __spreadValues({}, props)) });
 }
 var TableDataCustom_default = TableDataCustom;
-function useLogin({ login, schema }) {
+function WidgetContainer({ title, children, onStartDrag, onStartResize, onStartResizeEast, onStartResizeSouth, onStartResizeSouthEast, draggable = true, resizable = true, onRemove, onDuplicate }) {
+  const headerRef = useRef(null);
+  return /* @__PURE__ */ jsxs("div", { className: "relative rounded-lg border border-gray-200 bg-white dark:bg-gray-800 shadow-sm overflow-hidden", children: [
+    /* @__PURE__ */ jsxs(
+      "div",
+      {
+        ref: headerRef,
+        className: "flex items-center justify-between px-3 py-2 border-b border-gray-100 dark:border-gray-700 select-none " + (draggable ? "cursor-grab" : "cursor-default"),
+        style: { touchAction: "none" },
+        onPointerDown: (e) => {
+          if (e.shiftKey && resizable && onStartResize) return onStartResize(e);
+          if (draggable) onStartDrag == null ? void 0 : onStartDrag(e);
+        },
+        children: [
+          /* @__PURE__ */ jsx("span", { className: "text-sm font-medium text-gray-700 dark:text-gray-200", children: title }),
+          /* @__PURE__ */ jsxs("div", { className: "flex items-center gap-2", children: [
+            typeof onDuplicate === "function" ? /* @__PURE__ */ jsx(
+              "button",
+              {
+                type: "button",
+                className: "inline-flex items-center justify-center w-6 h-6 text-xs rounded bg-gray-200 hover:bg-gray-300 dark:bg-gray-700 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-200",
+                onClick: onDuplicate,
+                onPointerDown: (e) => e.stopPropagation(),
+                "aria-label": "Duplicate widget",
+                title: "Duplicate",
+                children: "\u29C9"
+              }
+            ) : null,
+            typeof onRemove === "function" ? /* @__PURE__ */ jsx(
+              "button",
+              {
+                type: "button",
+                className: "inline-flex items-center justify-center w-6 h-6 text-xs rounded bg-red-100 hover:bg-red-200 dark:bg-red-800/40 dark:hover:bg-red-700/50 text-red-700 dark:text-red-200",
+                onClick: onRemove,
+                onPointerDown: (e) => e.stopPropagation(),
+                "aria-label": "Remove widget",
+                title: "Remove",
+                children: "\xD7"
+              }
+            ) : null,
+            resizable ? /* @__PURE__ */ jsx(
+              "div",
+              {
+                className: "shrink-0 w-4 h-4 rounded bg-gray-300 dark:bg-gray-600 cursor-se-resize",
+                style: { touchAction: "none" },
+                onPointerDown: onStartResize,
+                "aria-label": "Resize",
+                title: "Resize"
+              }
+            ) : null
+          ] })
+        ]
+      }
+    ),
+    /* @__PURE__ */ jsx("div", { className: "p-3", children }),
+    resizable ? /* @__PURE__ */ jsxs(Fragment, { children: [
+      /* @__PURE__ */ jsx(
+        "div",
+        {
+          className: "absolute top-0 right-0 h-full w-1 cursor-ew-resize",
+          style: { touchAction: "none" },
+          onPointerDown: (e) => {
+            e.stopPropagation();
+            onStartResizeEast == null ? void 0 : onStartResizeEast(e);
+          },
+          "aria-label": "Resize east"
+        }
+      ),
+      /* @__PURE__ */ jsx(
+        "div",
+        {
+          className: "absolute bottom-0 left-0 w-full h-1 cursor-ns-resize",
+          style: { touchAction: "none" },
+          onPointerDown: (e) => {
+            e.stopPropagation();
+            onStartResizeSouth == null ? void 0 : onStartResizeSouth(e);
+          },
+          "aria-label": "Resize south"
+        }
+      ),
+      /* @__PURE__ */ jsx(
+        "div",
+        {
+          className: "absolute bottom-0 right-0 w-3 h-3 cursor-se-resize",
+          style: { touchAction: "none" },
+          onPointerDown: (e) => {
+            e.stopPropagation();
+            onStartResizeSouthEast == null ? void 0 : onStartResizeSouthEast(e);
+          },
+          "aria-label": "Resize south-east"
+        }
+      )
+    ] }) : null
+  ] });
+}
+
+// src/components/Dashboard/Widgets/layoutUtils.ts
+function clamp(value, min, max) {
+  return Math.max(min, Math.min(max, value));
+}
+function roundToCell(px, cell) {
+  return Math.round(px / cell);
+}
+function positionToStyle(pos) {
+  return {
+    gridColumnStart: pos.x + 1,
+    gridColumnEnd: pos.x + 1 + pos.w,
+    gridRowStart: pos.y + 1,
+    gridRowEnd: pos.y + 1 + pos.h
+  };
+}
+function intersects(a, b) {
+  const ax2 = a.x + a.w;
+  const ay2 = a.y + a.h;
+  const bx2 = b.x + b.w;
+  const by2 = b.y + b.h;
+  const noOverlap = ax2 <= b.x || bx2 <= a.x || ay2 <= b.y || by2 <= a.y;
+  return !noOverlap;
+}
+var DefaultChartAdapter = {
+  render(kind, props) {
+    switch (kind) {
+      case "bar":
+        return renderBar(props);
+      case "line":
+        return renderLine(props);
+      case "pie":
+        return renderPie(props);
+      default:
+        return /* @__PURE__ */ jsx("div", { className: "text-xs text-gray-500 dark:text-gray-400", children: "Unknown chart kind" });
+    }
+  }
+};
+function coerceNumbers(value) {
+  if (Array.isArray(value)) {
+    return value.map((v) => typeof v === "number" ? v : Number(v)).filter((v) => !Number.isNaN(v));
+  }
+  return [];
+}
+function renderBar(props) {
+  const data = coerceNumbers(props.data);
+  const width = typeof props.width === "number" ? props.width : 300;
+  const height = typeof props.height === "number" ? props.height : 120;
+  const padding = 16;
+  const max = Math.max(1, ...data);
+  const barWidth = (width - padding * 2) / Math.max(1, data.length);
+  const color = typeof props.color === "string" ? props.color : "#4f46e5";
+  return /* @__PURE__ */ jsx("svg", { width, height, role: "img", "aria-label": "Bar chart", children: data.map((v, i) => {
+    const h = (height - padding * 2) * v / max;
+    const x = padding + i * barWidth + barWidth * 0.1;
+    const y = height - padding - h;
+    return /* @__PURE__ */ jsx("rect", { x, y, width: barWidth * 0.8, height: h, fill: color, rx: 2 }, i);
+  }) });
+}
+function renderLine(props) {
+  const data = coerceNumbers(props.data);
+  const width = typeof props.width === "number" ? props.width : 300;
+  const height = typeof props.height === "number" ? props.height : 120;
+  const padding = 16;
+  const max = Math.max(1, ...data);
+  const color = typeof props.color === "string" ? props.color : "#16a34a";
+  const points = data.map((v, i) => {
+    const x = padding + i * ((width - padding * 2) / Math.max(1, data.length - 1));
+    const y = height - padding - (height - padding * 2) * v / max;
+    return `${x},${y}`;
+  });
+  return /* @__PURE__ */ jsx("svg", { width, height, role: "img", "aria-label": "Line chart", children: /* @__PURE__ */ jsx("polyline", { points: points.join(" "), fill: "none", stroke: color, strokeWidth: 2 }) });
+}
+function renderPie(props) {
+  const data = coerceNumbers(props.data);
+  const size = typeof props.size === "number" ? props.size : 120;
+  const radius = size / 2;
+  const total = data.reduce((acc, v) => acc + v, 0) || 1;
+  const colors = Array.isArray(props.colors) ? props.colors : ["#f97316", "#22c55e", "#3b82f6", "#e11d48"];
+  let startAngle = 0;
+  const slices = data.map((v, i) => {
+    const angle = v / total * Math.PI * 2;
+    const x1 = radius + radius * Math.cos(startAngle);
+    const y1 = radius + radius * Math.sin(startAngle);
+    const x2 = radius + radius * Math.cos(startAngle + angle);
+    const y2 = radius + radius * Math.sin(startAngle + angle);
+    const largeArc = angle > Math.PI ? 1 : 0;
+    const path = `M ${radius},${radius} L ${x1},${y1} A ${radius},${radius} 0 ${largeArc} 1 ${x2},${y2} z`;
+    startAngle += angle;
+    return /* @__PURE__ */ jsx("path", { d: path, fill: colors[i % colors.length] }, i);
+  });
+  return /* @__PURE__ */ jsx("svg", { width: size, height: size, role: "img", "aria-label": "Pie chart", children: slices });
+}
+function DashboardGrid({ grid, widgets, onLayoutChange, renderWidget, chartAdapter, enableDrag = true, enableResize = true, showActions = true }) {
+  const containerRef = useRef(null);
+  const [layout, setLayout] = useState(widgets);
+  const [drag, setDrag] = useState(null);
+  function commitLayout(next) {
+    setLayout(next);
+    onLayoutChange == null ? void 0 : onLayoutChange(next);
+  }
+  function removeWidget(id) {
+    const next = layout.filter((w) => w.id !== id);
+    commitLayout(next);
+  }
+  function duplicateWidget(id) {
+    const idx = findById(id);
+    if (idx === -1) return;
+    const src = layout[idx];
+    let copyIndex = 2;
+    let newId = `${src.id}-copy`;
+    while (layout.some((w) => w.id === newId)) {
+      newId = `${src.id}-copy-${copyIndex++}`;
+    }
+    const rectPos = __spreadValues({}, src.position);
+    let candidate = __spreadProps(__spreadValues({}, rectPos), { x: Math.min(rectPos.x + rectPos.w, grid.cols - rectPos.w) });
+    if (layout.some((w, i) => i !== idx && intersects(candidate, w.position))) {
+      candidate = __spreadProps(__spreadValues({}, rectPos), { y: rectPos.y + rectPos.h });
+    }
+    const isFree = (pos) => !layout.some((w) => intersects(pos, w.position));
+    if (!isFree(candidate)) {
+      let found = false;
+      for (let y = 0; y < 100 && !found; y++) {
+        for (let x = 0; x <= grid.cols - rectPos.w && !found; x++) {
+          const pos = { x, y, w: rectPos.w, h: rectPos.h };
+          if (isFree(pos)) {
+            candidate = pos;
+            found = true;
+          }
+        }
+      }
+    }
+    const copy = __spreadProps(__spreadValues({}, src), { id: newId, position: candidate });
+    const next = [...layout, copy];
+    commitLayout(next);
+  }
+  function findById(id) {
+    return layout.findIndex((w) => w.id === id);
+  }
+  function startDrag(id, mode, edge) {
+    return (e) => {
+      var _a, _b;
+      if (mode === "move" && !enableDrag) return;
+      if (mode === "resize" && !enableResize) return;
+      const rect = (_a = containerRef.current) == null ? void 0 : _a.getBoundingClientRect();
+      if (!rect) return;
+      const idx = findById(id);
+      if (idx === -1) return;
+      const pos = layout[idx].position;
+      (_b = containerRef.current) == null ? void 0 : _b.setPointerCapture(e.pointerId);
+      setDrag({ id, startX: e.clientX - rect.left, startY: e.clientY - rect.top, origPos: __spreadValues({}, pos), mode, edge });
+    };
+  }
+  function onPointerMove(e) {
+    var _a, _b;
+    if (!drag) return;
+    const rect = (_a = containerRef.current) == null ? void 0 : _a.getBoundingClientRect();
+    if (!rect) return;
+    const x = e.clientX - rect.left;
+    const y = e.clientY - rect.top;
+    const dx = x - drag.startX;
+    const dy = y - drag.startY;
+    const colWidth = (rect.width - (grid.cols - 1) * grid.gap) / grid.cols;
+    const deltaCols = roundToCell(dx, colWidth);
+    const deltaRows = roundToCell(dy, grid.rowHeight);
+    const idx = findById(drag.id);
+    if (idx === -1) return;
+    const current = layout[idx];
+    let nextPos = __spreadValues({}, drag.origPos);
+    if (drag.mode === "move") {
+      nextPos.x = clamp(drag.origPos.x + deltaCols, 0, grid.cols - drag.origPos.w);
+      nextPos.y = Math.max(0, drag.origPos.y + deltaRows);
+    } else {
+      const edge = (_b = drag.edge) != null ? _b : "se";
+      if (edge.includes("e")) {
+        nextPos.w = clamp(drag.origPos.w + deltaCols, 1, grid.cols - drag.origPos.x);
+      }
+      if (edge.includes("s")) {
+        nextPos.h = Math.max(1, drag.origPos.h + deltaRows);
+      }
+      if (edge.includes("w")) {
+        const newX = clamp(drag.origPos.x + deltaCols, 0, drag.origPos.x + drag.origPos.w - 1);
+        const deltaX = newX - drag.origPos.x;
+        nextPos.x = newX;
+        nextPos.w = Math.max(1, drag.origPos.w - deltaX);
+      }
+      if (edge.includes("n")) {
+        const newY = Math.max(0, drag.origPos.y + deltaRows);
+        const deltaY = newY - drag.origPos.y;
+        nextPos.y = newY;
+        nextPos.h = Math.max(1, drag.origPos.h - deltaY);
+      }
+    }
+    const collides = layout.some((w, i) => i !== idx && intersects(nextPos, w.position));
+    if (collides) return;
+    const next = [...layout];
+    next[idx] = __spreadProps(__spreadValues({}, current), { position: nextPos });
+    setLayout(next);
+  }
+  function onPointerUp(e) {
+    var _a;
+    if (!drag) return;
+    (_a = containerRef.current) == null ? void 0 : _a.releasePointerCapture(e.pointerId);
+    commitLayout(layout);
+    setDrag(null);
+  }
+  return /* @__PURE__ */ jsx(
+    "div",
+    {
+      ref: containerRef,
+      className: "grid",
+      style: {
+        gridTemplateColumns: `repeat(${grid.cols}, minmax(0, 1fr))`,
+        gridAutoRows: `${grid.rowHeight}px`,
+        gap: `${grid.gap}px`
+      },
+      onPointerMove,
+      onPointerUp,
+      children: layout.map((w) => /* @__PURE__ */ jsx("div", { style: positionToStyle(w.position), children: /* @__PURE__ */ jsx(
+        WidgetContainer,
+        {
+          title: w.title,
+          draggable: enableDrag,
+          resizable: enableResize,
+          onStartDrag: enableDrag ? startDrag(w.id, "move") : void 0,
+          onStartResize: enableResize ? startDrag(w.id, "resize", "se") : void 0,
+          onStartResizeEast: enableResize ? startDrag(w.id, "resize", "e") : void 0,
+          onStartResizeSouth: enableResize ? startDrag(w.id, "resize", "s") : void 0,
+          onStartResizeSouthEast: enableResize ? startDrag(w.id, "resize", "se") : void 0,
+          onRemove: showActions ? () => removeWidget(w.id) : void 0,
+          onDuplicate: showActions ? () => duplicateWidget(w.id) : void 0,
+          children: renderWidget ? renderWidget(w) : /* @__PURE__ */ jsx(DefaultWidgetRenderer, { widget: w, chartAdapter })
+        }
+      ) }, w.id))
+    }
+  );
+}
+function DefaultWidgetRenderer({ widget, chartAdapter }) {
+  var _a, _b, _c, _d;
+  const { type, props } = widget;
+  switch (type) {
+    case "card":
+      return /* @__PURE__ */ jsx("div", { className: "text-sm text-gray-700 dark:text-gray-200", children: String((_a = props == null ? void 0 : props.content) != null ? _a : "Card") });
+    case "stat":
+      return /* @__PURE__ */ jsxs("div", { className: "flex items-baseline gap-2", children: [
+        /* @__PURE__ */ jsx("span", { className: "text-2xl font-semibold text-gray-900 dark:text-white", children: String((_b = props == null ? void 0 : props.value) != null ? _b : "0") }),
+        /* @__PURE__ */ jsx("span", { className: "text-xs text-gray-500 dark:text-gray-400", children: String((_c = props == null ? void 0 : props.label) != null ? _c : "Stat") })
+      ] });
+    case "progress": {
+      const v = typeof (props == null ? void 0 : props.value) === "number" ? props.value : 0;
+      return /* @__PURE__ */ jsxs("div", { className: "w-full", children: [
+        /* @__PURE__ */ jsx("div", { className: "h-2 bg-gray-200 dark:bg-gray-700 rounded", children: /* @__PURE__ */ jsx("div", { className: "h-2 bg-indigo-600 rounded", style: { width: `${clamp(v, 0, 100)}%` } }) }),
+        /* @__PURE__ */ jsxs("div", { className: "mt-1 text-xs text-gray-500 dark:text-gray-400", children: [
+          v,
+          "%"
+        ] })
+      ] });
+    }
+    case "activity": {
+      const items = Array.isArray(props == null ? void 0 : props.items) ? props.items : [];
+      return /* @__PURE__ */ jsxs("ul", { className: "space-y-1 text-sm text-gray-700 dark:text-gray-200", children: [
+        items.length === 0 ? /* @__PURE__ */ jsx("li", { className: "text-gray-500 dark:text-gray-400", children: "No activity" }) : null,
+        items.map((it, i) => /* @__PURE__ */ jsx("li", { children: String(it) }, i))
+      ] });
+    }
+    case "chart": {
+      const kind = (_d = props == null ? void 0 : props.kind) != null ? _d : "line";
+      const adapter = chartAdapter != null ? chartAdapter : DefaultChartAdapter;
+      return adapter.render(kind, props != null ? props : {});
+    }
+    case "custom":
+    default:
+      return /* @__PURE__ */ jsx("div", { className: "text-sm text-gray-500 dark:text-gray-400", children: "Provide a custom renderer." });
+  }
+}
+function useLogin({
+  login,
+  schema
+}) {
   const [values, setValues] = useState({ username: "", password: "" });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
@@ -1428,7 +1800,6 @@ function useLogin({ login, schema }) {
   }
   function submit() {
     return __async(this, null, function* () {
-      var _a;
       setError(null);
       setLoading(true);
       try {
@@ -1437,7 +1808,8 @@ function useLogin({ login, schema }) {
         setResult(res);
         return res;
       } catch (e) {
-        setError((_a = e == null ? void 0 : e.message) != null ? _a : "Login failed");
+        const message = e instanceof Error ? e.message : "Login failed";
+        setError(message);
         throw e;
       } finally {
         setLoading(false);
@@ -1447,7 +1819,10 @@ function useLogin({ login, schema }) {
   return { values, update, submit, loading, error, result };
 }
 var useLogin_default = useLogin;
-function useRegister({ register, schema }) {
+function useRegister({
+  register,
+  schema
+}) {
   const [values, setValues] = useState({});
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
@@ -1457,7 +1832,6 @@ function useRegister({ register, schema }) {
   }
   function submit() {
     return __async(this, null, function* () {
-      var _a;
       setError(null);
       setLoading(true);
       try {
@@ -1466,7 +1840,8 @@ function useRegister({ register, schema }) {
         setUser(res);
         return res;
       } catch (e) {
-        setError((_a = e == null ? void 0 : e.message) != null ? _a : "Registration failed");
+        const message = e instanceof Error ? e.message : "Registration failed";
+        setError(message);
         throw e;
       } finally {
         setLoading(false);
@@ -1476,7 +1851,10 @@ function useRegister({ register, schema }) {
   return { values, update, submit, loading, error, user };
 }
 var useRegister_default = useRegister;
-function usePasswordReset({ reset, schema }) {
+function usePasswordReset({
+  reset,
+  schema
+}) {
   const [values, setValues] = useState({ email: "" });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
@@ -1486,7 +1864,6 @@ function usePasswordReset({ reset, schema }) {
   }
   function submit() {
     return __async(this, null, function* () {
-      var _a;
       setError(null);
       setSuccess(false);
       setLoading(true);
@@ -1495,7 +1872,8 @@ function usePasswordReset({ reset, schema }) {
         yield reset(input);
         setSuccess(true);
       } catch (e) {
-        setError((_a = e == null ? void 0 : e.message) != null ? _a : "Password reset failed");
+        const message = e instanceof Error ? e.message : "Password reset failed";
+        setError(message);
         throw e;
       } finally {
         setLoading(false);
@@ -1551,8 +1929,33 @@ function useFocusTrap(active) {
   }, [active]);
   return { ref };
 }
-var useKeyboardNavigation_default = void 0;
+function useKeyboardNavigation(container, { selector, initialIndex = 0 }) {
+  useEffect(() => {
+    if (!container) return;
+    const items = Array.from(container.querySelectorAll(selector));
+    if (items.length === 0) return;
+    items.forEach((el, i) => el.setAttribute("tabindex", i === initialIndex ? "0" : "-1"));
+    function onKeyDown(e) {
+      const currentIndex = items.findIndex((el) => el === document.activeElement);
+      if (e.key === "ArrowRight" || e.key === "ArrowDown") {
+        const next = items[(currentIndex + 1 + items.length) % items.length];
+        items.forEach((el) => el.setAttribute("tabindex", "-1"));
+        next.setAttribute("tabindex", "0");
+        next.focus();
+        e.preventDefault();
+      } else if (e.key === "ArrowLeft" || e.key === "ArrowUp") {
+        const prev = items[(currentIndex - 1 + items.length) % items.length];
+        items.forEach((el) => el.setAttribute("tabindex", "-1"));
+        prev.setAttribute("tabindex", "0");
+        prev.focus();
+        e.preventDefault();
+      }
+    }
+    container.addEventListener("keydown", onKeyDown);
+    return () => container.removeEventListener("keydown", onKeyDown);
+  }, [container, selector, initialIndex]);
+}
 
-export { Breadcrumb_default as Breadcrumb, ControlledZodDynamicForm, TableDataCustom_default as TableDataCustom, dashboard_default as Template, generatePageNumbers, useColorMode_default as useColorMode, useFocusTrap, useKeyboardNavigation_default as useKeyboardNavigation, useLiveRegion, useLocalStorage_default as useLocalStorage, useLogin_default as useLogin, usePasswordReset_default as usePasswordReset, useRegister_default as useRegister };
+export { Breadcrumb_default as Breadcrumb, ControlledZodDynamicForm, DashboardGrid, DefaultChartAdapter, TableDataCustom_default as TableDataCustom, dashboard_default as Template, generatePageNumbers, useColorMode_default as useColorMode, useFocusTrap, useKeyboardNavigation, useLiveRegion, useLocalStorage_default as useLocalStorage, useLogin_default as useLogin, usePasswordReset_default as usePasswordReset, useRegister_default as useRegister };
 //# sourceMappingURL=index.js.map
 //# sourceMappingURL=index.js.map
