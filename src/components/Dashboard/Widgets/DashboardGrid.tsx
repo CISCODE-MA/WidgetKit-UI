@@ -1,4 +1,4 @@
-import { useRef, useState } from 'react';
+import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import type { PointerEvent } from 'react';
 import type {
   BaseWidgetConfig,
@@ -22,6 +22,7 @@ type Props = {
   enableDrag?: boolean; // allow moving widgets
   enableResize?: boolean; // allow resizing widgets
   showActions?: boolean; // show default remove/duplicate actions
+  persistKey?: string; // optional localStorage key to persist layout directly
 };
 
 type DragState = {
@@ -42,15 +43,62 @@ export default function DashboardGrid({
   enableDrag = true,
   enableResize = true,
   showActions = true,
+  persistKey,
 }: Props): JSX.Element {
   const containerRef = useRef<HTMLDivElement | null>(null);
   const [layout, setLayout] = useState<DashboardLayout>(widgets);
   const [drag, setDrag] = useState<DragState | null>(null);
 
+  const latestLayoutRef = useRef<DashboardLayout>(widgets);
+  const hydratedFromStorageRef = useRef<boolean>(false);
+  // Hydrate from localStorage on mount if persistKey is provided (host fallback)
+  useLayoutEffect(() => {
+    if (!persistKey || typeof window === 'undefined') return;
+    try {
+      const raw = window.localStorage.getItem(persistKey);
+      if (raw) {
+        // If the persisted layout differs from incoming widgets, prefer persisted
+        const incoming = JSON.stringify(widgets);
+        if (raw !== incoming) {
+          const saved = JSON.parse(raw) as DashboardLayout;
+          if (Array.isArray(saved)) {
+            hydratedFromStorageRef.current = true;
+            latestLayoutRef.current = saved;
+            setLayout(saved);
+            onLayoutChange?.(saved);
+          }
+        }
+      }
+    } catch {
+      // ignore JSON/storage errors
+    }
+    // run once on mount
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
   function commitLayout(next: DashboardLayout): void {
     setLayout(next);
     onLayoutChange?.(next);
+    latestLayoutRef.current = next;
+    if (persistKey && typeof window !== 'undefined') {
+      try {
+        window.localStorage.setItem(persistKey, JSON.stringify(next));
+      } catch {
+        // ignore storage errors
+      }
+    }
   }
+
+  // Keep internal layout in sync with incoming widgets prop (for persistence/restores)
+  // Use layout effect to apply before paint and avoid any visual jump
+  useLayoutEffect(() => {
+    if (hydratedFromStorageRef.current) {
+      // Skip one cycle to avoid overriding persisted layout
+      hydratedFromStorageRef.current = false;
+      return;
+    }
+    latestLayoutRef.current = widgets;
+    setLayout(widgets);
+  }, [widgets]);
 
   function removeWidget(id: WidgetId): void {
     const next = layout.filter((w) => w.id !== id);
@@ -172,13 +220,15 @@ export default function DashboardGrid({
 
     const next = [...layout];
     next[idx] = { ...current, position: nextPos };
+    // Track latest computed layout to persist exact final position on pointer up
+    latestLayoutRef.current = next;
     setLayout(next);
   }
 
   function onPointerUp(e: PointerEvent<HTMLDivElement>): void {
     if (!drag) return;
     containerRef.current?.releasePointerCapture(e.pointerId);
-    commitLayout(layout);
+    commitLayout(latestLayoutRef.current);
     setDrag(null);
   }
 

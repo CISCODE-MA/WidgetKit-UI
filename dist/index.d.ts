@@ -325,8 +325,9 @@ type Props = {
     enableDrag?: boolean;
     enableResize?: boolean;
     showActions?: boolean;
+    persistKey?: string;
 };
-declare function DashboardGrid({ grid, widgets, onLayoutChange, renderWidget, chartAdapter, enableDrag, enableResize, showActions }: Props): JSX.Element;
+declare function DashboardGrid({ grid, widgets, onLayoutChange, renderWidget, chartAdapter, enableDrag, enableResize, showActions, persistKey, }: Props): JSX.Element;
 
 declare const DefaultChartAdapter: ChartAdapter;
 

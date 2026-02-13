@@ -1,4 +1,4 @@
-import React4, { useState, useEffect, useRef, useCallback, useMemo } from 'react';
+import React4, { useState, useEffect, useRef, useLayoutEffect, useCallback, useMemo } from 'react';
 import { useLocation, NavLink, Link as Link$1 } from 'react-router';
 import { jsx, jsxs, Fragment } from 'react/jsx-runtime';
 import { useT } from '@ciscode/ui-translate-core';
@@ -1417,7 +1417,19 @@ function TableDataCustom(props) {
   return /* @__PURE__ */ jsx(TableErrorBoundary_default, { children: /* @__PURE__ */ jsx(TableDataCustomBase_default, __spreadValues({}, props)) });
 }
 var TableDataCustom_default = TableDataCustom;
-function WidgetContainer({ title, children, onStartDrag, onStartResize, onStartResizeEast, onStartResizeSouth, onStartResizeSouthEast, draggable = true, resizable = true, onRemove, onDuplicate }) {
+function WidgetContainer({
+  title,
+  children,
+  onStartDrag,
+  onStartResize,
+  onStartResizeEast,
+  onStartResizeSouth,
+  onStartResizeSouthEast,
+  draggable = true,
+  resizable = true,
+  onRemove,
+  onDuplicate
+}) {
   const headerRef = useRef(null);
   return /* @__PURE__ */ jsxs("div", { className: "relative rounded-lg border border-gray-200 bg-white dark:bg-gray-800 shadow-sm overflow-hidden", children: [
     /* @__PURE__ */ jsxs(
@@ -1605,14 +1617,60 @@ function renderPie(props) {
   });
   return /* @__PURE__ */ jsx("svg", { width: size, height: size, role: "img", "aria-label": "Pie chart", children: slices });
 }
-function DashboardGrid({ grid, widgets, onLayoutChange, renderWidget, chartAdapter, enableDrag = true, enableResize = true, showActions = true }) {
+function DashboardGrid({
+  grid,
+  widgets,
+  onLayoutChange,
+  renderWidget,
+  chartAdapter,
+  enableDrag = true,
+  enableResize = true,
+  showActions = true,
+  persistKey
+}) {
   const containerRef = useRef(null);
   const [layout, setLayout] = useState(widgets);
   const [drag, setDrag] = useState(null);
+  const latestLayoutRef = useRef(widgets);
+  const hydratedFromStorageRef = useRef(false);
+  useLayoutEffect(() => {
+    if (!persistKey || typeof window === "undefined") return;
+    try {
+      const raw = window.localStorage.getItem(persistKey);
+      if (raw) {
+        const incoming = JSON.stringify(widgets);
+        if (raw !== incoming) {
+          const saved = JSON.parse(raw);
+          if (Array.isArray(saved)) {
+            hydratedFromStorageRef.current = true;
+            latestLayoutRef.current = saved;
+            setLayout(saved);
+            onLayoutChange == null ? void 0 : onLayoutChange(saved);
+          }
+        }
+      }
+    } catch (e) {
+    }
+  }, []);
   function commitLayout(next) {
     setLayout(next);
     onLayoutChange == null ? void 0 : onLayoutChange(next);
+    latestLayoutRef.current = next;
+    if (persistKey && typeof window !== "undefined") {
+      try {
+        window.localStorage.setItem(persistKey, JSON.stringify(next));
+      } catch (e) {
+      }
+    }
   }
+  useLayoutEffect(() => {
+    if (hydratedFromStorageRef.current) {
+      hydratedFromStorageRef.current = false;
+      return;
+    }
+    latestLayoutRef.current = widgets;
+    setLayout(widgets);
+  }, [widgets]);
   function removeWidget(id) {
     const next = layout.filter((w) => w.id !== id);
     commitLayout(next);
@@ -1662,7 +1720,14 @@ function DashboardGrid({ grid, widgets, onLayoutChange, renderWidget, chartAdapt
       if (idx === -1) return;
       const pos = layout[idx].position;
       (_b = containerRef.current) == null ? void 0 : _b.setPointerCapture(e.pointerId);
-      setDrag({ id, startX: e.clientX - rect.left, startY: e.clientY - rect.top, origPos: __spreadValues({}, pos), mode, edge });
+      setDrag({
+        id,
+        startX: e.clientX - rect.left,
+        startY: e.clientY - rect.top,
+        origPos: __spreadValues({}, pos),
+        mode,
+        edge
+      });
     };
   }
   function onPointerMove(e) {
@@ -1680,7 +1745,7 @@ function DashboardGrid({ grid, widgets, onLayoutChange, renderWidget, chartAdapt
     const idx = findById(drag.id);
     if (idx === -1) return;
     const current = layout[idx];
-    let nextPos = __spreadValues({}, drag.origPos);
+    const nextPos = __spreadValues({}, drag.origPos);
     if (drag.mode === "move") {
       nextPos.x = clamp(drag.origPos.x + deltaCols, 0, grid.cols - drag.origPos.w);
       nextPos.y = Math.max(0, drag.origPos.y + deltaRows);
@@ -1709,13 +1774,14 @@ function DashboardGrid({ grid, widgets, onLayoutChange, renderWidget, chartAdapt
     if (collides) return;
     const next = [...layout];
     next[idx] = __spreadProps(__spreadValues({}, current), { position: nextPos });
+    latestLayoutRef.current = next;
     setLayout(next);
   }
   function onPointerUp(e) {
     var _a;
     if (!drag) return;
     (_a = containerRef.current) == null ? void 0 : _a.releasePointerCapture(e.pointerId);
-    commitLayout(layout);
+    commitLayout(latestLayoutRef.current);
     setDrag(null);
   }
   return /* @__PURE__ */ jsx(
@@ -1749,7 +1815,10 @@ function DashboardGrid({ grid, widgets, onLayoutChange, renderWidget, chartAdapt
     }
   );
 }
-function DefaultWidgetRenderer({ widget, chartAdapter }) {
+function DefaultWidgetRenderer({
+  widget,
+  chartAdapter
+}) {
   var _a, _b, _c, _d;
   const { type, props } = widget;
   switch (type) {

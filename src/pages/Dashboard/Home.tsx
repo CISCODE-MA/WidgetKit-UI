@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import useLocalStorage from '../../hooks/useLocalStorage';
 import type { DashboardLayout, GridConfig } from '../../models/DashboardWidget';
 import DashboardGrid from '../../components/Dashboard/Widgets/DashboardGrid';
 
@@ -42,7 +43,8 @@ const initialLayout: DashboardLayout = [
 ];
 
 const Home = (): JSX.Element => {
-  const [layout, setLayout] = useState<DashboardLayout>(initialLayout);
+  // Persist layout to localStorage so positions/sizes and actions survive reloads
+  const [layout, setLayout] = useLocalStorage<DashboardLayout>('dashboard-layout', initialLayout);
   return (
     <div className="space-y-4">
       <h1 className="text-xl font-semibold">Home Page Dashboard</h1>
@@ -53,6 +55,7 @@ const Home = (): JSX.Element => {
         enableDrag={true}
         enableResize={true}
         showActions={true}
+        persistKey={'dashboard-layout'}
       />
     </div>
   );
