@@ -64,9 +64,11 @@ describe('ControlledZodDynamicForm', () => {
   });
 
   it('alerts on details errors and passes nested errors to custom component', () => {
-    const DetailsStub = ({ errors }: { errors: Record<number, Record<string, string>> }) => (
-      <div data-testid="details-errors">{Object.keys(errors || {}).length}</div>
-    );
+    // Accept all props as Record<string, unknown> to match FieldConfigDynamicForm.component type
+    const DetailsStub = (props: Record<string, unknown>) => {
+      const errors = props.errors as Record<number, Record<string, string>> | undefined;
+      return <div data-testid="details-errors">{Object.keys(errors || {}).length}</div>;
+    };
 
     const fields: FieldConfigDynamicForm[] = [
       { name: 'details', label: 'Details', type: 'custom', component: DetailsStub },

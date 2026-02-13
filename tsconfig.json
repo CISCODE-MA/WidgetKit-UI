@@ -15,5 +15,5 @@
     "allowSyntheticDefaultImports": true,
     "emitDeclarationOnly": false
   },
-  "include": ["src", "src/models"]
+  "include": ["src", "src/models", "tests/setup.ts", "tests/**/*.ts", "tests/**/*.tsx"]
 }

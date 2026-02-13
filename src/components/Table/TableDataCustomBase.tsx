@@ -1,3 +1,4 @@
+import type { JSX } from 'react';
 import React, { useCallback, useMemo, useState } from 'react';
 import { generatePageNumbers } from '../../hooks/useGeneratePageNumbers';
 import { TableLoader } from '../../common/Loader/TableLoader';
