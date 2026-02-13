@@ -11,4 +11,26 @@ export interface ColumnConfigTable<T> {
     row: T,
     setPopover: (popover: { anchor: HTMLElement | null; content: React.ReactNode }) => void,
   ) => React.ReactNode;
+
+  /** Sorting configuration */
+  sortable?: boolean;
+  sortComparator?: (a: unknown, b: unknown, rowA: T, rowB: T) => number;
+
+  /** Filtering configuration */
+  filterable?: boolean;
+  filterPredicate?: (value: unknown, row: T, query: string) => boolean;
+
+  /** Inline editing configuration */
+  editable?: boolean;
+  editor?: (args: {
+    value: unknown;
+    row: T;
+    rowIndex: number;
+    onChange: (next: unknown) => void;
+    onCommit: () => void;
+    onCancel: () => void;
+  }) => React.ReactNode;
+
+  /** Optional className for the cell */
+  cellClassName?: string;
 }

@@ -11,7 +11,7 @@ describe('useColorMode', () => {
     // default from useLocalStorage is 'light'
     expect(document.body.classList.contains('dark')).toBe(false);
 
-    const [, setMode] = result.current as any;
+    const [, setMode] = result.current as [string, (value: string) => void];
 
     act(() => setMode('dark'));
     expect(document.body.classList.contains('dark')).toBe(true);

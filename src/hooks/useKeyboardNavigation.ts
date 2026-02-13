@@ -14,7 +14,7 @@ export type RovingConfig = {
 export function useKeyboardNavigation(
   container: HTMLElement | null,
   { selector, initialIndex = 0 }: RovingConfig,
-) {
+): void {
   useEffect(() => {
     if (!container) return;
     const items = Array.from(container.querySelectorAll<HTMLElement>(selector));
@@ -23,7 +23,7 @@ export function useKeyboardNavigation(
     // Initialize tabindex
     items.forEach((el, i) => el.setAttribute('tabindex', i === initialIndex ? '0' : '-1'));
 
-    function onKeyDown(e: KeyboardEvent) {
+    function onKeyDown(e: KeyboardEvent): void {
       const currentIndex = items.findIndex((el) => el === document.activeElement);
       if (e.key === 'ArrowRight' || e.key === 'ArrowDown') {
         const next = items[(currentIndex + 1 + items.length) % items.length];
@@ -44,5 +44,3 @@ export function useKeyboardNavigation(
     return () => container.removeEventListener('keydown', onKeyDown);
   }, [container, selector, initialIndex]);
 }
-
-export default undefined;
