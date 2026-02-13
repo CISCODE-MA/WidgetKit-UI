@@ -1,3 +1,4 @@
+import type { JSX } from 'react';
 /** Each item within a section */
 export interface SidebarItem {
   label: string;

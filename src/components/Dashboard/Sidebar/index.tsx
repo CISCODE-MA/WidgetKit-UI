@@ -1,3 +1,4 @@
+import type { JSX } from 'react';
 import React, { useEffect, useRef, useState, ReactNode } from 'react';
 import { useLocation, NavLink } from 'react-router';
 import { SidebarSection } from '../../../models/SidebarItemModel';

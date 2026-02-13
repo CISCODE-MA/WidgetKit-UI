@@ -1,3 +1,4 @@
+import type { JSX } from 'react';
 import { useLayoutEffect, useRef, useState } from 'react';
 import type { PointerEvent } from 'react';
 import type {

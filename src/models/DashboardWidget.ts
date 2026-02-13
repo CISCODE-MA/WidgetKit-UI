@@ -1,3 +1,4 @@
+import type { JSX } from 'react';
 export type WidgetType = 'card' | 'stat' | 'progress' | 'activity' | 'chart' | 'custom';
 
 export type WidgetId = string;

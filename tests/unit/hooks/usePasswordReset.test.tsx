@@ -5,7 +5,10 @@ import { usePasswordReset } from '../../../src';
 describe('usePasswordReset', () => {
   it('submits and marks success', async () => {
     const reset = async () => {};
-    const schema = { parse: (v: any) => v };
+    // Use a real zod schema to match expected ZodSchema type
+    const schema = require('zod').z.object({
+      email: require('zod').z.string().email(),
+    });
 
     const { result } = renderHook(() => usePasswordReset({ reset, schema }));
 

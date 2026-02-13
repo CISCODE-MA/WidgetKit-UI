@@ -1,3 +1,4 @@
+import type { JSX } from 'react';
 import React from 'react';
 
 const Loader = (): JSX.Element => {
