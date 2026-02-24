@@ -8,7 +8,7 @@ permissions:
   contents: read
 
 env:
-  SONAR_ENABLED: 'true' 
+  SONAR_ENABLED: 'true'
 
 jobs:
   release-check:
