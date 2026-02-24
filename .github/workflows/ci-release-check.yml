@@ -56,8 +56,8 @@ jobs:
       - name: Lint
         run: npm run lint
 
-      - name: Test (with coverage)
-        run: npm run test:cov
+      - name: Test
+        run: npm run test
 
       - name: Build
         run: npm run build
