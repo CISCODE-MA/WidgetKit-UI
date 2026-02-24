@@ -8,7 +8,7 @@ permissions:
   contents: read
 
 env:
-  SONAR_ENABLED: 'false' # set to "true" in real repos
+  SONAR_ENABLED: 'true' 
 
 jobs:
   release-check:
