@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import type { JSX } from 'react';
 import useLocalStorage from '../../hooks/useLocalStorage';
 import type { DashboardLayout, GridConfig } from '../../models/DashboardWidget';
 import DashboardGrid from '../../components/Dashboard/Widgets/DashboardGrid';

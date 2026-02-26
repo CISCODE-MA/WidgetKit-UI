@@ -1,3 +1,4 @@
+import type { JSX } from 'react';
 import { useRef, useEffect } from 'react';
 import type { ReactNode, RefObject } from 'react';
 

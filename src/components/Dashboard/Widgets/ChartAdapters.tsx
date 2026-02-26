@@ -1,3 +1,4 @@
+import type { JSX } from 'react';
 import type { ChartAdapter, ChartKind } from '../../../models/DashboardWidget';
 
 // Minimal default chart adapter using plain SVG.

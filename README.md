@@ -1,4 +1,4 @@
-# WidgetKit-UI: React Dashboard & Data Table Library
+# @ciscode/ui-widget-kit
 
 Reusable React TypeScript library for dashboard widgets, grid layout, and advanced data tables. Built for host app integration with drag, resize, actions, and localStorage persistence.
 

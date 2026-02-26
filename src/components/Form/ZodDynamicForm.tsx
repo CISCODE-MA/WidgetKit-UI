@@ -1,3 +1,4 @@
+import type { JSX } from 'react';
 import { useState } from 'react';
 import type { ReactNode, ChangeEvent, FormEvent } from 'react';
 import { ZodSchema, ZodError } from 'zod';
@@ -65,7 +66,7 @@ export default function ControlledZodDynamicForm({
         // Check if any error is specifically for "details" path
         let detailsErrorFound = false;
 
-        err.errors.forEach((issue) => {
+        err.issues.forEach((issue: { path: any[]; message: string }) => {
           const pathKey = issue.path.join('.');
           newErrors[pathKey] = issue.message;
 

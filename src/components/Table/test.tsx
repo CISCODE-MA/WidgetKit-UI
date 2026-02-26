@@ -1,3 +1,4 @@
+import type { JSX } from 'react';
 import { Trans } from '@ciscode/ui-translate-core';
 
 export interface PaginationProps {
