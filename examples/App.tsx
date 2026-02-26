@@ -5,8 +5,8 @@ import {
   ControlledZodDynamicForm,
   type ColumnConfigTable,
   type FieldConfigDynamicForm,
-  type ToolbarItem,
-} from '@ciscode/template-fe';
+} from '../src';
+import { ToolbarItem } from '../src/models/ToolbarItemModel';
 import { z } from 'zod';
 
 export default function App(): JSX.Element {
