@@ -1,12 +1,12 @@
-import React, { useState } from 'react';
+import React, { JSX, useState } from 'react';
 import {
   Breadcrumb,
   TableDataCustom,
   ControlledZodDynamicForm,
   type ColumnConfigTable,
   type FieldConfigDynamicForm,
-  type ToolbarItem,
-} from '@ciscode/template-fe';
+} from '../src';
+import { ToolbarItem } from '../src/models/ToolbarItemModel';
 import { z } from 'zod';
 
 export default function App(): JSX.Element {
