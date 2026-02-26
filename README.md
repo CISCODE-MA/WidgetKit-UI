@@ -1,26 +1,29 @@
-# React TypeScript DeveloperKit (Template)
+# WidgetKit-UI: React Dashboard & Data Table Library
 
-Template repository for building reusable React TypeScript **npm libraries**
-(components + hooks + utilities).
+Reusable React TypeScript library for dashboard widgets, grid layout, and advanced data tables. Built for host app integration with drag, resize, actions, and localStorage persistence.
 
 ## What you get
 
+- Dashboard widget grid: drag, resize, duplicate, remove, actions
+- Layout persistence: localStorage hydration and commit
+- Data table: typed columns, selection, sorting, filtering, inline edit, pagination
+- Error boundaries for widgets and tables
+- Pluggable chart adapters (default SVG)
 - ESM + CJS + Types build (tsup)
-- Vitest testing
+- Vitest unit/integration tests
 - ESLint + Prettier (flat config)
-- Changesets (manual release flow, no automation PR)
+- Changesets (manual release flow)
 - Husky (pre-commit + pre-push)
 - Enforced public API via `src/index.ts`
-- Dependency-free styling (Tailwind-compatible by convention only)
-- `react` and `react-dom` as peerDependencies
+- Tailwind-compatible styling (no dependency)
 
 ## Peer Dependencies & Requirements
 
 - React ecosystem:
   - `react` and `react-dom` (host-provided)
-  - `react-router-dom` (required if you use `Breadcrumb` or any router-integrated components)
-  - `zod` (required if you use `ControlledZodDynamicForm`)
-  - `@ciscode/ui-translate-core` (optional i18n provider used by some components)
+  - `react-router-dom` (required for router-integrated components)
+  - `zod` (required for forms)
+  - `@ciscode/ui-translate-core` (optional i18n)
 
 Install in host app:
 
@@ -30,14 +33,12 @@ npm i react react-dom react-router-dom zod @ciscode/ui-translate-core
 
 ## Package structure
 
-- `src/components` – reusable UI components
+- `src/components` – dashboard, table, form, layout, and common UI components
 - `src/hooks` – reusable React hooks
-- `src/utils` – framework-agnostic utilities
+- `src/models` – typed configs for tables, forms, sidebar, toolbar
 - `src/index.ts` – **only public API** (no deep imports allowed)
 
 Anything not exported from `src/index.ts` is considered private.
-
-## Scripts
 
 ## Scripts
 
@@ -46,23 +47,20 @@ Anything not exported from `src/index.ts` is considered private.
 - `npm run build` – build library to `dist/` (tsup: ESM + CJS + dts)
 - `npm test` – run unit/integration tests (Vitest)
 - `npm run test:cov` – run tests with coverage report
-- `npm run e2e` / `npm run e2e:headed` – run Playwright tests
 - `npm run typecheck` – TypeScript typecheck
-- `npm run type-check:watch` – TypeScript typecheck in watch mode
 - `npm run lint` – ESLint
-- `npm run format` / `npm run format:write` – Prettier
+- `npm run format` – Prettier
 - `npx changeset` – create a changeset
-  Anything not exported from `src/index.ts` is considered private.
 
 ### Public API (summary)
 
 Root exports from `src/index.ts`:
 
-- Components: `Template`, `Breadcrumb`, `ControlledZodDynamicForm`, `TableDataCustom`
-- Hooks: `useLocalStorage`, `useColorMode`, `generatePageNumbers`
-- Types: `ColumnConfigTable`, `FieldConfigDynamicForm`, `ToolbarItem`, `SidebarItem`, `SidebarSection`, and layout types (`TemplateSidebarConfig`, `TemplateNavbarConfig`, `TemplateFooterConfig`, etc.)
+- Components: `DashboardGrid`, `WidgetContainer`, `TableDataCustom`, `Breadcrumb`, `ControlledZodDynamicForm`, `Loader`, `PageTitle`, `Sidebar`, `DarkModeSwitcher`, etc.
+- Hooks: `useLocalStorage`, `useColorMode`, `useGeneratePageNumbers`
+- Types: `ColumnConfigTable`, `FieldConfigDynamicForm`, `SidebarItemModel`, `ToolbarItemModel`, layout types
 
-Internal-only components and utilities are intentionally not exported to avoid coupling (e.g. base-only table components). Use the wrapped components provided by the public API.
+Internal-only components and utilities are intentionally not exported to avoid coupling. Use the wrapped components provided by the public API.
 
 ### Router Integration
 
@@ -84,26 +82,25 @@ Hooks
   ```tsx
   const [theme, setTheme] = useLocalStorage('color-theme', 'light');
   ```
-- `useLogin`:
+- `useColorMode`:
   ```tsx
-  const { values, update, submit, loading, error } = useLogin({
-    login: async ({ username, password }) => ({ user: { name: username }, token: 't123' }),
-    schema: { parse: (v) => v },
-  });
+  const { colorMode, setColorMode } = useColorMode();
+  ```
+- `useGeneratePageNumbers`:
+  ```tsx
+  const pages = useGeneratePageNumbers({ currentPage: 1, totalPages: 5 });
   ```
 
 Components
 
-- `Breadcrumb`:
-
+- `DashboardGrid`:
   ```tsx
-  <Breadcrumb pageName="Dashboard" />
+  <DashboardGrid widgets={widgets} persistKey="dashboard-layout" />
   ```
-
 - `TableDataCustom`:
 
   ```tsx
-  import { TableDataCustom, type ColumnConfigTable } from '@ciscode/template-fe';
+  import { TableDataCustom, type ColumnConfigTable } from '@ciscode/widgetkit-ui';
 
   type Row = { id: number; name: string };
   const columns: ColumnConfigTable<Row>[] = [
@@ -126,7 +123,7 @@ Components
 - `ControlledZodDynamicForm`:
 
   ```tsx
-  import { ControlledZodDynamicForm, type FieldConfigDynamicForm } from '@ciscode/template-fe';
+  import { ControlledZodDynamicForm, type FieldConfigDynamicForm } from '@ciscode/widgetkit-ui';
   import { z } from 'zod';
 
   const schema = z.object({ name: z.string().min(1) });
@@ -154,7 +151,7 @@ Components
 
 - Unit tests live under `tests/unit/` and run in `jsdom`.
 - Coverage uses `v8` provider; HTML report is written to `coverage/`.
-- We exclude demo/layout code from coverage to focus on exported library APIs.
+- Demo/layout code excluded from coverage; focus is on exported library APIs.
 
 ### RTL Support
 
@@ -174,10 +171,10 @@ Components
 - Run the local examples to preview components:
 
 ```bash
-npm run dev:examples
+npm run dev
 ```
 
-- The examples import from the local source via an alias `@ciscode/template-fe`.
+- The examples import from the local source via an alias `@ciscode/widgetkit-ui`.
 
 To publish:
 
@@ -193,5 +190,5 @@ To publish:
 - Changeset created and PR merged
 - `dist/` contains `index.js`, `index.cjs`, `index.d.ts`
 
-This repository is a **template**. Teams should clone it and focus only on
+This repository is a **library**. Teams should focus only on
 library logic, not tooling or release mechanics.
