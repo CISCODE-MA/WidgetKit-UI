@@ -3,6 +3,8 @@ import { render, screen, fireEvent } from '@testing-library/react';
 import ControlledZodDynamicForm from '../../src/components/Form/ZodDynamicForm';
 import TableDataCustom from '../../src/components/Table/TableDataCustom';
 import { z } from 'zod';
+import React, { useState } from 'react';
+import type { FieldConfigDynamicForm } from '../../src/models/FieldConfigDynamicForm';
 
 describe('Form + Table Workflow', () => {
   it('submits form data and displays it in the table', () => {
@@ -11,35 +13,50 @@ describe('Form + Table Workflow', () => {
       age: z.number().min(0, 'Age must be positive'),
     });
 
-    const fields = [
+    const fields: FieldConfigDynamicForm[] = [
       { name: 'name', label: 'Name', type: 'text' },
       { name: 'age', label: 'Age', type: 'number' },
     ];
 
-    const initialValues = { name: '', age: 0 };
+    type InitialValues = { name: string; age: number };
+    const initialValues: InitialValues = { name: '', age: 0 };
     const onSubmit = vi.fn();
 
-    render(
-      <div>
-        <ControlledZodDynamicForm
-          schema={schema}
-          fields={fields}
-          values={initialValues}
-          onChangeField={(name, value) => (initialValues[name] = value)}
-          onSubmit={(values) => {
-            onSubmit(values);
-            data.push(values);
-          }}
-        />
-        <TableDataCustom
-          columns={[
-            { key: 'name', title: 'Name' },
-            { key: 'age', title: 'Age' },
-          ]}
-          data={data}
-        />
-      </div>,
-    );
+    const TestComponent = () => {
+      const [data, setData] = useState<Array<{ name: string; age: number }>>([]);
+
+      return (
+        <div>
+          <ControlledZodDynamicForm
+            schema={schema}
+            fields={fields}
+            values={initialValues}
+            onChangeField={(fieldName: string, value: unknown) => {
+              if (
+                fieldName in initialValues &&
+                (typeof value === 'string' || typeof value === 'number')
+              ) {
+                initialValues[fieldName as keyof InitialValues] = value as never;
+              }
+            }}
+            onSubmit={(parsedValues: Record<string, unknown>) => {
+              const values = parsedValues as { name: string; age: number };
+              onSubmit(values);
+              setData((prevData) => [...prevData, values]);
+            }}
+          />
+          <TableDataCustom
+            columns={[
+              { key: 'name', title: 'Name' },
+              { key: 'age', title: 'Age' },
+            ]}
+            data={data}
+          />
+        </div>
+      );
+    };
+
+    render(<TestComponent />);
 
     fireEvent.change(screen.getByLabelText('Name'), { target: { value: 'Alice' } });
     fireEvent.change(screen.getByLabelText('Age'), { target: { value: '25' } });
