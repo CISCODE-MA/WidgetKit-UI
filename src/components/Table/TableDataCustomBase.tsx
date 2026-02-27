@@ -356,9 +356,9 @@ function TableDataCustomBase<T>({
                   </tr>
                 ) : (
                   visibleData.map((row, r) => (
-                    <tr key={r} className="border-b">
+                    <tr key={r} className="border-b" role="row" aria-rowindex={r + 1}>
                       {enableSelection && (
-                        <td className="px-4 py-3">
+                        <td className="px-4 py-3" role="gridcell">
                           <input
                             type="checkbox"
                             aria-label={`Select row ${r + 1}`}
@@ -398,7 +398,9 @@ function TableDataCustomBase<T>({
                         return (
                           <td
                             key={c}
-                            className={`px-4 py-3 ltr:text-left rtl:text-right ${col.cellClassName ?? ''}`}
+                            role="gridcell"
+                            className="px-4 py-3"
+                            tabIndex={0} // Ensure focusable cells
                           >
                             {content}
                           </td>
