@@ -1,3 +1,4 @@
+import type { JSX } from 'react';
 import React from 'react';
 import TableErrorBoundary from '../../exceptions/TableErrorBoundary';
 import TableDataCustomBase, { TableDataCustomProps } from './TableDataCustomBase';
@@ -7,7 +8,7 @@ import TableDataCustomBase, { TableDataCustomProps } from './TableDataCustomBase
  * Wraps `TableDataCustomBase` in `TableErrorBoundary` to provide a safe fallback.
  * Consumers should import `TableDataCustom` from the package root.
  */
-function TableDataCustom<T>(props: TableDataCustomProps<T>) {
+function TableDataCustom<T>(props: TableDataCustomProps<T>): JSX.Element {
   return (
     <TableErrorBoundary>
       <TableDataCustomBase {...props} />

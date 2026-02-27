@@ -1,13 +1,14 @@
 import { describe, it, expect, vi } from 'vitest';
 import { render, screen } from '@testing-library/react';
 import Breadcrumb from './Breadcrumb';
+import type { ReactNode } from 'react';
 
 vi.mock('@ciscode/ui-translate-core', () => ({
-  useT: () => (key: string, vars?: any) => (typeof key === 'string' ? key : 't'),
+  useT: () => (key: string) => (typeof key === 'string' ? key : 't'),
 }));
 
 vi.mock('react-router', () => ({
-  Link: ({ children }: any) => <a href="/">{children}</a>,
+  Link: ({ children }: { children: ReactNode }) => <a href="/">{children}</a>,
 }));
 
 describe('Breadcrumb', () => {

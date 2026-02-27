@@ -3,22 +3,37 @@ name: CI - Release Check
 on:
   pull_request:
     branches: [master]
+  push:
+    branches: [master]
+  workflow_dispatch:
+    inputs:
+      sonar:
+        description: 'Run SonarCloud analysis'
+        required: true
+        default: 'false'
+        type: choice
+        options:
+          - 'false'
+          - 'true'
 
-permissions:
-  contents: read
-
-env:
-  SONAR_ENABLED: 'false' # set to "true" in real repos
+concurrency:
+  group: ci-release-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
-  release-check:
-    name: CI - Release Check
-    # Only run when PR is from develop -> master
-    if: github.head_ref == 'develop'
+  ci:
+    name: release checks
     runs-on: ubuntu-latest
+    timeout-minutes: 25
+
+    # Config stays in the workflow file (token stays in repo secrets)
+    env:
+      SONAR_HOST_URL: 'https://sonarcloud.io'
+      SONAR_ORGANIZATION: 'ciscode'
+      SONAR_PROJECT_KEY: 'CISCODE-MA_WidgetKit-UI'
 
     steps:
-      - name: Checkout (full history for Sonar)
+      - name: Checkout
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
@@ -26,41 +41,45 @@ jobs:
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
-          node-version: 20
-          cache: npm
+          node-version: '22'
+          cache: 'npm'
 
       - name: Install
         run: npm ci
 
-      - name: Format (check)
+      - name: Format
         run: npm run format
-
-      - name: Lint
-        run: npm run lint
 
       - name: Typecheck
         run: npm run typecheck
 
+      - name: Lint
+        run: npm run lint
+
       - name: Test
-        run: npm test
+        run: npm run test
 
       - name: Build
         run: npm run build
 
-      # --- SonarQube scan + Quality Gate ---
-      - name: SonarQube Scan
-        if: env.SONAR_ENABLED == 'true' && (github.event.pull_request.head.repo.fork == false)
-        uses: sonarsource/sonarqube-scan-action@v4
+      - name: SonarCloud Scan
+        if: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.sonar == 'true' }}
+        uses: SonarSource/sonarqube-scan-action@v6
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-          SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
+          SONAR_HOST_URL: ${{ env.SONAR_HOST_URL }}
         with:
           args: >
-            -Dsonar.projectKey=${{ secrets.SONAR_PROJECT_KEY }}
+            -Dsonar.organization=${{ env.SONAR_ORGANIZATION }} \
+            -Dsonar.projectKey=${{ env.SONAR_PROJECT_KEY }} \
+            -Dsonar.sources=src \
+            -Dsonar.tests=test \
+            -Dsonar.javascript.lcov.reportPaths=coverage/lcov.info
 
-      - name: SonarQube Quality Gate
-        if: env.SONAR_ENABLED == 'true' && (github.event.pull_request.head.repo.fork == false)
-        uses: sonarsource/sonarqube-quality-gate-action@v1.1.0
+      - name: SonarCloud Quality Gate
+        if: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.sonar == 'true' }}
+        uses: SonarSource/sonarqube-quality-gate-action@v1
+        timeout-minutes: 10
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-          SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
+          SONAR_HOST_URL: ${{ env.SONAR_HOST_URL }}

@@ -1,15 +1,15 @@
-import React, { useState } from 'react';
+import React, { JSX, useState } from 'react';
 import {
   Breadcrumb,
   TableDataCustom,
   ControlledZodDynamicForm,
   type ColumnConfigTable,
   type FieldConfigDynamicForm,
-  type ToolbarItem,
-} from '@ciscode/template-fe';
+} from '../src';
+import { ToolbarItem } from '../src/models/ToolbarItemModel';
 import { z } from 'zod';
 
-export default function App() {
+export default function App(): JSX.Element {
   type Row = { id: number; name: string };
   // form schema and state must be declared at component scope for hooks compliance
   const schema = z.object({
@@ -17,8 +17,8 @@ export default function App() {
     email: z.string().email('Invalid email'),
   });
   const fields: FieldConfigDynamicForm[] = [
-    { key: 'name', label: 'Name', type: 'text' },
-    { key: 'email', label: 'Email', type: 'email' },
+    { name: 'name', label: 'Name', type: 'text' },
+    { name: 'email', label: 'Email', type: 'text' },
   ];
   const [formValues, setFormValues] = useState<{ name: string; email: string }>({
     name: '',

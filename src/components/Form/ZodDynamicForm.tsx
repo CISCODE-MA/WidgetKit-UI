@@ -1,17 +1,19 @@
-import React, { useState } from 'react';
+import type { JSX } from 'react';
+import { useState } from 'react';
+import type { ReactNode, ChangeEvent, FormEvent } from 'react';
 import { ZodSchema, ZodError } from 'zod';
 import { MultiValue } from 'react-select';
 import Select from 'react-select';
 import { FieldConfigDynamicForm } from '../../models/FieldConfigDynamicForm';
 
 export interface ControlledZodDynamicFormProps {
-  schema: ZodSchema<any>;
+  schema: ZodSchema<Record<string, unknown>>;
   fields: FieldConfigDynamicForm[];
-  values: Record<string, any>;
-  onChangeField: (fieldName: string, newValue: any) => void;
-  onSubmit: (parsedValues: Record<string, any>) => void;
+  values: Record<string, unknown>;
+  onChangeField: (fieldName: string, newValue: unknown) => void;
+  onSubmit: (parsedValues: Record<string, unknown>) => void;
   submitLabel?: string;
-  header?: React.ReactNode;
+  header?: ReactNode;
   /** Optional override for the ZodError class (for dependency injection) */
 }
 
@@ -23,7 +25,7 @@ export default function ControlledZodDynamicForm({
   onSubmit,
   submitLabel = 'Submit',
   header,
-}: ControlledZodDynamicFormProps) {
+}: ControlledZodDynamicFormProps): JSX.Element {
   const [errors, setErrors] = useState<Record<string, string>>({});
 
   /**
@@ -31,10 +33,10 @@ export default function ControlledZodDynamicForm({
    * Uses a type guard so we can safely read e.target.checked if it's a checkbox.
    */
   function handleInputChange(
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>,
-  ) {
+    e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>,
+  ): void {
     const { name, value, type } = e.target;
-    let newValue: any = value;
+    let newValue: unknown = value;
 
     // type guard for checkbox
     if (type === 'checkbox' && e.target instanceof HTMLInputElement) {
@@ -49,7 +51,7 @@ export default function ControlledZodDynamicForm({
    * On form submit => parse the entire `values` with Zod.
    * If it fails, store the error messages in local state to display.
    */
-  function handleSubmit(e: React.FormEvent) {
+  function handleSubmit(e: FormEvent): void {
     e.preventDefault();
     try {
       // Attempt to parse the entire form data with Zod
@@ -64,7 +66,7 @@ export default function ControlledZodDynamicForm({
         // Check if any error is specifically for "details" path
         let detailsErrorFound = false;
 
-        err.errors.forEach((issue) => {
+        err.issues.forEach((issue: { path: any[]; message: string }) => {
           const pathKey = issue.path.join('.');
           newErrors[pathKey] = issue.message;
 
@@ -108,7 +110,7 @@ export default function ControlledZodDynamicForm({
                       id={field.name}
                       name={field.name}
                       placeholder={field.placeholder}
-                      value={fieldValue}
+                      value={typeof fieldValue === 'string' ? fieldValue : String(fieldValue ?? '')}
                       onChange={handleInputChange}
                       className="border border-gray-300 rounded-lg px-3 py-2 w-full ltr:text-left rtl:text-right"
                     />
@@ -119,7 +121,11 @@ export default function ControlledZodDynamicForm({
                     <select
                       id={field.name}
                       name={field.name}
-                      value={fieldValue}
+                      value={
+                        typeof fieldValue === 'string' || typeof fieldValue === 'number'
+                          ? fieldValue
+                          : ''
+                      }
                       onChange={handleInputChange}
                       className="border border-gray-300 rounded-lg px-3 py-2 w-full ltr:text-left rtl:text-right"
                     >
@@ -165,14 +171,10 @@ export default function ControlledZodDynamicForm({
                       isMulti
                       options={multiOpts}
                       value={selectedValues}
-                      onChange={(selected) => {
-                        // selected: array of { label, value }
-                        const arrIds = (
-                          selected as MultiValue<{
-                            label: string;
-                            value: string;
-                          }>
-                        ).map((opt) => opt.value);
+                      onChange={(
+                        selected: MultiValue<{ label: string; value: string | number }>,
+                      ) => {
+                        const arrIds = selected.map((opt) => opt.value);
                         onChangeField(field.name, arrIds);
                       }}
                       className="w-full"
@@ -197,7 +199,7 @@ export default function ControlledZodDynamicForm({
                     <CustomComp
                       key={field.name}
                       value={fieldValue}
-                      onChange={(newVal: any) => onChangeField(field.name, newVal)}
+                      onChange={(newVal: unknown) => onChangeField(field.name, newVal)}
                       errors={subErrors}
                       {...field.props}
                       // optionally pass more props if needed
@@ -214,7 +216,15 @@ export default function ControlledZodDynamicForm({
                       type={field.type === 'number' ? 'number' : 'text'}
                       step={field.step || '1'} // fallback if no step is provided
                       placeholder={field.placeholder}
-                      value={fieldValue}
+                      value={
+                        field.type === 'number'
+                          ? typeof fieldValue === 'number'
+                            ? fieldValue
+                            : Number(fieldValue) || 0
+                          : typeof fieldValue === 'string'
+                            ? fieldValue
+                            : String(fieldValue ?? '')
+                      }
                       onChange={handleInputChange}
                       className="border border-gray-300 rounded-lg px-3 py-2 w-full ltr:text-left rtl:text-right"
                     />

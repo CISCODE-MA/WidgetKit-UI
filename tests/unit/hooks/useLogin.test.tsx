@@ -7,7 +7,11 @@ describe('useLogin', () => {
     const login = async (credentials: { username: string; password: string }) => {
       return { user: { name: credentials.username }, token: 't123' };
     };
-    const schema = { parse: (input: any) => input };
+    // Use a real zod schema to match expected ZodSchema type
+    const schema = require('zod').z.object({
+      username: require('zod').z.string(),
+      password: require('zod').z.string(),
+    });
 
     const { result } = renderHook(() => useLogin({ login, schema }));
 
