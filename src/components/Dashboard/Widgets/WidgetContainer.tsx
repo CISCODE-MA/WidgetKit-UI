@@ -32,7 +32,14 @@ export default function WidgetContainer({
   const headerRef = useRef<HTMLDivElement | null>(null);
 
   return (
-    <div className="relative rounded-lg border border-gray-200 bg-white dark:bg-gray-800 shadow-sm overflow-hidden">
+    <div
+      className="relative rounded-lg border border-gray-200 bg-white dark:bg-gray-800 shadow-sm overflow-hidden"
+      role="region"
+      aria-labelledby={`widget-title-${title}`}
+    >
+      <h2 id={`widget-title-${title}`} className="widget-title">
+        {title}
+      </h2>
       <div
         ref={headerRef}
         className={

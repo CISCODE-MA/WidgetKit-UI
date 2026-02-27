@@ -24,19 +24,15 @@ export default function DashboardGrid({
   // Minimal grid rendering: each widget in a grid cell
   return (
     <div
-      className="grid"
+      className={`grid gap-${grid.gap}`}
       style={{
         gridTemplateColumns: `repeat(${grid.cols}, minmax(0, 1fr))`,
-        gap: grid.gap,
       }}
     >
       {widgets.map((widget) => (
         <div
           key={widget.id}
-          style={{
-            gridColumn: `${widget.position.x + 1} / span ${widget.position.w}`,
-            gridRow: `${widget.position.y + 1} / span ${widget.position.h}`,
-          }}
+          className={`col-span-${widget.position.w} row-span-${widget.position.h}`}
         >
           <WidgetContainer title={widget.title} draggable={enableDrag} resizable={enableResize}>
             {/* Render widget content based on type */}
@@ -56,7 +52,6 @@ export default function DashboardGrid({
                     style={{ width: `${Number(widget.props?.value ?? 0)}%` }}
                   />
                 </div>
-                <div className="text-xs mt-1">{Number(widget.props?.value ?? 0)}%</div>
               </div>
             )}
             {widget.type === 'activity' && (

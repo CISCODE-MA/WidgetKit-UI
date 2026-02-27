@@ -7,10 +7,11 @@ Reusable React TypeScript library for dashboard widgets, grid layout, and advanc
 - Dashboard widget grid: drag, resize, duplicate, remove, actions
 - Layout persistence: localStorage hydration and commit
 - Data table: typed columns, selection, sorting, filtering, inline edit, pagination
-- Error boundaries for widgets and tables
+- Error boundaries for widgets and tables (enhanced with reset and logging capabilities)
 - Pluggable chart adapters (default SVG)
 - ESM + CJS + Types build (tsup)
-- Vitest unit/integration tests
+- Vitest unit/integration tests (80%+ coverage target)
+- Playwright E2E tests for critical user paths (e.g., drag/resize in DashboardGrid)
 - ESLint + Prettier (flat config)
 - Changesets (manual release flow)
 - Husky (pre-commit + pre-push)
@@ -39,6 +40,18 @@ npm i react react-dom react-router-dom zod @ciscode/ui-translate-core
 - `src/index.ts` – **only public API** (no deep imports allowed)
 
 Anything not exported from `src/index.ts` is considered private.
+
+## New Features
+
+### Enhanced Error Handling
+
+- Error boundaries now include a reset mechanism and optional logging integration (e.g., Sentry).
+- Hooks (`useLogin`, `usePasswordReset`, `useRegister`) support error reporting and user-friendly messages.
+
+### Improved Testing
+
+- **Integration Tests**: Added workflows for `ControlledZodDynamicForm` and `TableDataCustom`.
+- **E2E Tests**: Expanded coverage to include `DashboardGrid` drag/resize functionality.
 
 ## Scripts
 

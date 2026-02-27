@@ -56,13 +56,17 @@ export function useLogin<TUser = unknown>({
     setError(null);
     setLoading(true);
     try {
-      const input = schema ? schema.parse(values) : values;
-      const res = await login(input);
+      const credentials = schema ? schema.parse(values) : values;
+      const res = await login(credentials);
       setResult(res);
       return res;
     } catch (e: unknown) {
-      const message = e instanceof Error ? e.message : 'Login failed';
-      setError(message);
+      setError('Login failed. Please try again.');
+      // Optional: Report error to an external service
+      if (process.env.NODE_ENV === 'production') {
+        // Replace with your logging service, e.g., Sentry
+        // Sentry.captureException(e);
+      }
       throw e;
     } finally {
       setLoading(false);

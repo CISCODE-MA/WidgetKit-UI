@@ -69,9 +69,9 @@ export default function App(): JSX.Element {
   ];
 
   return (
-    <div style={{ padding: 24 }}>
+    <div className="p-6">
       <Breadcrumb pageName="Examples" />
-      <div style={{ marginTop: 16 }}>
+      <div className="mt-4">
         <TableDataCustom<Row>
           columns={columns}
           data={data}
@@ -85,10 +85,10 @@ export default function App(): JSX.Element {
         />
       </div>
 
-      <hr style={{ margin: '24px 0' }} />
+      <hr className="my-6" />
       <h2>ControlledZodDynamicForm</h2>
       <p>Simple required-field form using Zod.</p>
-      <div style={{ marginTop: 12 }}>
+      <div className="mt-3">
         <ControlledZodDynamicForm
           fields={fields}
           schema={schema}

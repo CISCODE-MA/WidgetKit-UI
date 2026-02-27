@@ -48,8 +48,12 @@ export function useRegister<TUser = unknown>({
       setUser(res);
       return res;
     } catch (e: unknown) {
-      const message = e instanceof Error ? e.message : 'Registration failed';
-      setError(message);
+      setError('Registration failed. Please try again.');
+      // Optional: Report error to an external service
+      if (process.env.NODE_ENV === 'production') {
+        // Replace with your logging service, e.g., Sentry
+        // Sentry.captureException(e);
+      }
       throw e;
     } finally {
       setLoading(false);
