@@ -6,7 +6,6 @@ export { default as Breadcrumb } from './components/Breadcrumbs/Breadcrumb';
 export { default as ControlledZodDynamicForm } from './components/Form/ZodDynamicForm';
 export { default as TableDataCustom } from './components/Table/TableDataCustom';
 export { default as DashboardGrid } from './components/Dashboard/Widgets/DashboardGrid';
-export { DefaultChartAdapter } from './components/Dashboard/Widgets/ChartAdapters';
 
 // Hooks (public)
 export { default as useLocalStorage } from './hooks/useLocalStorage';
@@ -52,7 +51,3 @@ export type { BreadcrumbProps } from './components/Breadcrumbs/Breadcrumb';
 export type { ControlledZodDynamicFormProps } from './components/Form/ZodDynamicForm';
 export type { PaginationProps, TableDataCustomProps } from './components/Table/TableDataCustomBase';
 export type { DashboardProps } from './main/dashboard';
-// Types (hooks)
-export type { LoginCredentials, LoginResult, UseLoginOptions } from './hooks/useLogin';
-export type { RegisterPayload, UseRegisterOptions } from './hooks/useRegister';
-export type { PasswordResetInput, UsePasswordResetOptions } from './hooks/usePasswordReset';

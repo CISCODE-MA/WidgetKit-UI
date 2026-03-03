@@ -51,8 +51,9 @@ export default function ControlledZodDynamicForm({
    * On form submit => parse the entire `values` with Zod.
    * If it fails, store the error messages in local state to display.
    */
-  function handleSubmit(e: FormEvent): void {
+  function handleSubmit(e: FormEvent<HTMLFormElement>): void {
     e.preventDefault();
+    setErrors({});
     try {
       // Attempt to parse the entire form data with Zod
       const parsed = schema.parse(values);
@@ -87,7 +88,7 @@ export default function ControlledZodDynamicForm({
   }
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-6">
+    <form onSubmit={handleSubmit} aria-describedby="form-errors">
       {/* header */}
       {header && <div className="mb-4">{header}</div>}
 
@@ -245,6 +246,11 @@ export default function ControlledZodDynamicForm({
           {submitLabel}
         </button>
       </div>
+      {Object.keys(errors).length > 0 && (
+        <div id="form-errors" className="text-red-600 mt-4">
+          Please fix the errors above.
+        </div>
+      )}
     </form>
   );
 }

@@ -52,8 +52,12 @@ export function usePasswordReset({
       await reset(input);
       setSuccess(true);
     } catch (e: unknown) {
-      const message = e instanceof Error ? e.message : 'Password reset failed';
-      setError(message);
+      setError('Password reset failed. Please try again.');
+      // Optional: Report error to an external service
+      if (process.env.NODE_ENV === 'production') {
+        // Replace with your logging service, e.g., Sentry
+        // Sentry.captureException(e);
+      }
       throw e;
     } finally {
       setLoading(false);
