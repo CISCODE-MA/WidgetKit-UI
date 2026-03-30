@@ -15,6 +15,7 @@ export default [
       'tests/**',
       'examples/**',
       'build/**',
+      'postcss.config.js',
     ],
   },
 
@@ -41,7 +42,10 @@ export default [
       'react/react-in-jsx-scope': 'off',
       'react/prop-types': 'off',
       '@typescript-eslint/no-explicit-any': 'warn',
-      '@typescript-eslint/no-unused-vars': 'warn',
+      '@typescript-eslint/no-unused-vars': [
+        'warn',
+        { argsIgnorePattern: '^_', varsIgnorePattern: '^_' },
+      ],
     },
   },
 
