@@ -6,8 +6,9 @@ const DarkModeSwitcher: React.FC = () => {
 
   return (
     <li>
+      <div className="flex h-9 items-center justify-center rounded-xl bg-white shadow-sm dark:bg-boxdark">
       <label
-        className={`relative m-0 block h-7.5 w-14 rounded-full ${
+        className={`relative m-0 block h-5 w-10 rounded-full ${
           colorMode === 'dark' ? 'bg-primary' : 'bg-stroke'
         }`}
       >
@@ -20,7 +21,7 @@ const DarkModeSwitcher: React.FC = () => {
           className="absolute inset-0 cursor-pointer opacity-0"
         />
         <span
-          className={`absolute top-1/2 flex h-6 w-6 -translate-y-1/2 items-center justify-center rounded-full bg-white shadow-switcher duration-75 ease-linear ltr:left-[3px] rtl:right-[3px] ${
+          className={`absolute top-1/2 flex h-4 w-4 -translate-y-1/2 items-center justify-center rounded-full bg-white shadow-switcher duration-75 ease-linear ltr:left-[3px] rtl:right-[3px] ${
             colorMode === 'dark'
               ? 'ltr:!right-[3px] rtl:!left-[3px] ltr:!translate-x-full rtl:!-translate-x-full'
               : ''
@@ -60,6 +61,7 @@ const DarkModeSwitcher: React.FC = () => {
           </span>
         </span>
       </label>
+      </div>
     </li>
   );
 };

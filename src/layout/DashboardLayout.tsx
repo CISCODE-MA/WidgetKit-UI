@@ -1,4 +1,5 @@
-import React, { useState, ReactNode } from 'react';
+import React, { ReactNode, useState } from 'react';
+import type { DropdownUserConfig } from '../components/Dashboard/Header/DropdownUser';
 import Header from '../components/Dashboard/Header/index';
 import Sidebar from '../components/Dashboard/Sidebar/index';
 import { SidebarSection } from '../models/SidebarItemModel';
@@ -14,6 +15,10 @@ interface DashboardLayoutProps {
   sidebarContent: SidebarSection[];
   logo: ReactNode;
   onLogout?: () => void;
+  /** Authenticated user data to display in the navbar */
+  user?: DropdownUserConfig;
+  /** Optional extra actions rendered in the header action list */
+  headerActions?: ReactNode;
 
   footer?: {
     /**
@@ -41,6 +46,8 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({
   logo,
   onLogout,
   footer,
+  user,
+  headerActions,
 }) => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
@@ -59,10 +66,10 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({
         />
 
         {/* Main content column */}
-        <div className="relative flex flex-1 flex-col overflow-y-auto overflow-x-hidden">
-          <Header sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} onLogout={onLogout} />
+        <div className="relative flex flex-1 flex-col overflow-y-auto">
+          <Header sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} onLogout={onLogout} user={user} headerActions={headerActions} />
 
-          <div className="flex min-h-0 flex-1 flex-col">
+          <div className="relative z-[1] flex min-h-0 flex-1 flex-col overflow-x-hidden">
             {/* Content */}
             <main className="flex-1">
               <div className="mx-auto max-w-screen-2xl p-4 md:p-6 2xl:p-10">{children}</div>
