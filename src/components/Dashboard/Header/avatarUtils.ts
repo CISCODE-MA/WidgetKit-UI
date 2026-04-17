@@ -18,7 +18,9 @@ export function pickGradient(name: string): string {
 /** Derive two-letter initials from a full name */
 export function getInitials(name: string): string {
   const parts = name.trim().split(/\s+/);
-  return parts.length >= 2
-    ? `${parts[0][0]}${parts.at(-1)![0]}`.toUpperCase()
-    : name.slice(0, 2).toUpperCase();
+  if (parts.length >= 2) {
+    const last = parts[parts.length - 1] as string; // NOSONAR: Array.at() requires ES2022, target is ES2016
+    return `${parts[0]![0]}${last[0]}`.toUpperCase();
+  }
+  return name.slice(0, 2).toUpperCase();
 }

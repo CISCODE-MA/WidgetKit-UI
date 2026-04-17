@@ -13,7 +13,8 @@
     "outDir": "dist",
     "moduleResolution": "node",
     "allowSyntheticDefaultImports": true,
-    "emitDeclarationOnly": false
+    "emitDeclarationOnly": false,
+    "types": ["vitest/globals", "@testing-library/jest-dom"]
   },
   "include": ["src", "src/models", "tests/setup.ts", "tests/**/*.ts", "tests/**/*.tsx"]
 }
