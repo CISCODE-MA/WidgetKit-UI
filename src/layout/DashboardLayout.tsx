@@ -67,7 +67,13 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({
 
         {/* Main content column */}
         <div className="relative flex flex-1 flex-col overflow-y-auto">
-          <Header sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} onLogout={onLogout} user={user} headerActions={headerActions} />
+          <Header
+            sidebarOpen={sidebarOpen}
+            setSidebarOpen={setSidebarOpen}
+            onLogout={onLogout}
+            user={user}
+            headerActions={headerActions}
+          />
 
           <div className="relative z-[1] flex min-h-0 flex-1 flex-col overflow-x-hidden">
             {/* Content */}

@@ -9,10 +9,10 @@ import { SidebarSection } from '../models/SidebarItemModel';
 
 // New typed configs (non-breaking additions)
 import type {
-    TemplateFooterConfig,
-    TemplateNavbarConfig,
-    TemplateSidebarConfig,
-    TemplateUserConfig,
+  TemplateFooterConfig,
+  TemplateNavbarConfig,
+  TemplateSidebarConfig,
+  TemplateUserConfig,
 } from './layoutTypes';
 
 /**

@@ -19,19 +19,29 @@ export { default as useRegister } from './hooks/useRegister';
 
 // Types (layout public)
 export type {
-    SidebarActionItem, SidebarExternalLink, SidebarInternalLink, TemplateFooterConfig,
-    TemplateLayoutConfig, TemplateNavbarBrandConfig, TemplateNavbarConfig, TemplateSidebarConfig, SidebarItem as TemplateSidebarItem, TemplateUserConfig, VisibilityRule
+  SidebarActionItem,
+  SidebarExternalLink,
+  SidebarInternalLink,
+  TemplateFooterConfig,
+  TemplateLayoutConfig,
+  TemplateNavbarBrandConfig,
+  TemplateNavbarConfig,
+  TemplateSidebarConfig,
+  SidebarItem as TemplateSidebarItem,
+  TemplateUserConfig,
+  VisibilityRule,
 } from './main/layoutTypes';
 
 // Types (models public)
 export type { ColumnConfigTable } from './models/ColumnConfigTable';
 export type {
-    BaseWidgetConfig,
-    ChartAdapter,
-    ChartKind, DashboardLayout,
-    GridConfig,
-    WidgetPosition,
-    WidgetType
+  BaseWidgetConfig,
+  ChartAdapter,
+  ChartKind,
+  DashboardLayout,
+  GridConfig,
+  WidgetPosition,
+  WidgetType,
 } from './models/DashboardWidget';
 export type { FieldConfigDynamicForm } from './models/FieldConfigDynamicForm';
 export type { SidebarItem, SidebarSection } from './models/SidebarItemModel';

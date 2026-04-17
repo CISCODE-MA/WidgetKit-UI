@@ -50,9 +50,28 @@ const DropdownMessage: React.FC = () => {
   const t = useT('templateFe');
 
   const messages: MessageItem[] = [
-    { id: 1, user: 'Mariya Desoja', text: 'I like your confidence 💪', time: '2 min ago', unread: true, online: true },
-    { id: 2, user: 'Robert John', text: 'Can you share your offer?', time: '10 min ago', unread: true },
-    { id: 3, user: 'Henry Dholi', text: 'I came across your profile and...', time: '1 day ago', online: true },
+    {
+      id: 1,
+      user: 'Mariya Desoja',
+      text: 'I like your confidence 💪',
+      time: '2 min ago',
+      unread: true,
+      online: true,
+    },
+    {
+      id: 2,
+      user: 'Robert John',
+      text: 'Can you share your offer?',
+      time: '10 min ago',
+      unread: true,
+    },
+    {
+      id: 3,
+      user: 'Henry Dholi',
+      text: 'I came across your profile and...',
+      time: '1 day ago',
+      online: true,
+    },
     { id: 4, user: 'Cody Fisher', text: "I'm waiting for your response!", time: '5 days ago' },
   ];
 
@@ -132,9 +151,7 @@ const DropdownMessage: React.FC = () => {
                       <p className="mt-0.5 text-xs text-body dark:text-bodydark truncate">{text}</p>
                     </div>
 
-                    {unread && (
-                      <span className="ml-1 h-2 w-2 shrink-0 rounded-full bg-primary" />
-                    )}
+                    {unread && <span className="ml-1 h-2 w-2 shrink-0 rounded-full bg-primary" />}
                   </Link>
                 </li>
               ))}
