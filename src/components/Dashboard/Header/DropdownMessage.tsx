@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Link } from 'react-router';
 import ClickOutside from '../ClickOutside';
 import { useT } from '@ciscode/ui-translate-core';
+import { getInitials, pickGradient } from './avatarUtils';
 
 interface MessageItem {
   id: number;
@@ -14,21 +15,8 @@ interface MessageItem {
 
 /** Generates a deterministic gradient + initials avatar from a name */
 const InitialsAvatar: React.FC<{ name: string; online?: boolean }> = ({ name, online }) => {
-  const parts = name.trim().split(/\s+/);
-  const initials =
-    parts.length >= 2
-      ? `${parts[0][0]}${parts[parts.length - 1][0]}`.toUpperCase()
-      : name.slice(0, 2).toUpperCase();
-
-  const gradients = [
-    'from-[#667EEA] to-[#764BA2]',
-    'from-[#F093FB] to-[#F5576C]',
-    'from-[#4FACFE] to-[#00F2FE]',
-    'from-[#43E97B] to-[#38F9D7]',
-    'from-[#FA709A] to-[#FEE140]',
-    'from-[#A18CD1] to-[#FBC2EB]',
-  ];
-  const gradient = gradients[name.charCodeAt(0) % gradients.length];
+  const initials = getInitials(name);
+  const gradient = pickGradient(name);
 
   return (
     <div className="relative shrink-0">
