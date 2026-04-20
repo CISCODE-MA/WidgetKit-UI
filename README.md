@@ -80,8 +80,8 @@ Internal-only components and utilities are intentionally not exported to avoid c
 Some components (e.g., `Breadcrumb`) rely on React Router. In host apps, wrap your app with `RouterProvider` from `react-router-dom` and ensure `Link` works:
 
 ```tsx
-import { createBrowserRouter, RouterProvider } from "react-router-dom";
-const router = createBrowserRouter([{ path: "/", element: <App /> }]);
+import { createBrowserRouter, RouterProvider } from 'react-router-dom';
+const router = createBrowserRouter([{ path: '/', element: <App /> }]);
 export function Root() {
   return <RouterProvider router={router} />;
 }
@@ -93,7 +93,7 @@ Hooks
 
 - `useLocalStorage`:
   ```tsx
-  const [theme, setTheme] = useLocalStorage("color-theme", "light");
+  const [theme, setTheme] = useLocalStorage('color-theme', 'light');
   ```
 - `useColorMode`:
   ```tsx
@@ -113,20 +113,17 @@ Components
 - `TableDataCustom`:
 
   ```tsx
-  import {
-    TableDataCustom,
-    type ColumnConfigTable,
-  } from "@ciscode/widgetkit-ui";
+  import { TableDataCustom, type ColumnConfigTable } from '@ciscode/widgetkit-ui';
 
   type Row = { id: number; name: string };
   const columns: ColumnConfigTable<Row>[] = [
-    { key: "id", title: "ID" },
-    { key: "name", title: "Name" },
+    { key: 'id', title: 'ID' },
+    { key: 'name', title: 'Name' },
   ];
 
   <TableDataCustom<Row>
     columns={columns}
-    data={[{ id: 1, name: "Alice" }]}
+    data={[{ id: 1, name: 'Alice' }]}
     pagination={{
       currentPage: 1,
       totalPages: 3,
@@ -139,21 +136,16 @@ Components
 - `ControlledZodDynamicForm`:
 
   ```tsx
-  import {
-    ControlledZodDynamicForm,
-    type FieldConfigDynamicForm,
-  } from "@ciscode/widgetkit-ui";
-  import { z } from "zod";
+  import { ControlledZodDynamicForm, type FieldConfigDynamicForm } from '@ciscode/widgetkit-ui';
+  import { z } from 'zod';
 
   const schema = z.object({ name: z.string().min(1) });
-  const fields: FieldConfigDynamicForm[] = [
-    { key: "name", label: "Name", type: "text" },
-  ];
+  const fields: FieldConfigDynamicForm[] = [{ key: 'name', label: 'Name', type: 'text' }];
 
   <ControlledZodDynamicForm
     fields={fields}
     schema={schema}
-    values={{ name: "" }}
+    values={{ name: '' }}
     onChangeField={(field, val) => {
       /* update your form state */
     }}

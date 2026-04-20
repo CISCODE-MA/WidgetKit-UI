@@ -60,7 +60,12 @@ describe('TableDataCustomBase features', () => {
 
   it('uses custom sortComparator', () => {
     const customColumns: ColumnConfigTable<Row>[] = [
-      { key: 'age', title: 'Age', sortable: true, sortComparator: (a, b) => (a as number) - (b as number) },
+      {
+        key: 'age',
+        title: 'Age',
+        sortable: true,
+        sortComparator: (a, b) => (a as number) - (b as number),
+      },
     ];
     render(<TableDataCustomBase<Row> columns={customColumns} data={data} enableSorting />);
     fireEvent.click(screen.getByText('Age'));
@@ -112,7 +117,12 @@ describe('TableDataCustomBase features', () => {
 
   it('uses custom filterPredicate', () => {
     const customCols: ColumnConfigTable<Row>[] = [
-      { key: 'age', title: 'Age', filterable: true, filterPredicate: (_v, row, q) => row.age > Number(q) },
+      {
+        key: 'age',
+        title: 'Age',
+        filterable: true,
+        filterPredicate: (_v, row, q) => row.age > Number(q),
+      },
     ];
     render(<TableDataCustomBase<Row> columns={customCols} data={data} enableFilter />);
     const input = screen.getByPlaceholderText('Filter…');

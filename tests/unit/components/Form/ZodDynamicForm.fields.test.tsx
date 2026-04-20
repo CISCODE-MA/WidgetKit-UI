@@ -9,10 +9,7 @@ vi.mock('react-select', () => ({
   default: ({ options, onChange, value }: any) => (
     <div data-testid="mock-select">
       {options.map((o: any) => (
-        <button
-          key={o.value}
-          onClick={() => onChange([...(Array.isArray(value) ? value : []), o])}
-        >
+        <button key={o.value} onClick={() => onChange([...(Array.isArray(value) ? value : []), o])}>
           {o.label}
         </button>
       ))}
@@ -57,7 +54,9 @@ describe('ControlledZodDynamicForm field types', () => {
       { name: 'val', label: 'Notes', type: 'textarea', placeholder: 'Write here' },
     ];
     const onSubmit = vi.fn();
-    render(<Harness schema={schema} fields={fields} initialValues={{ val: '' }} onSubmit={onSubmit} />);
+    render(
+      <Harness schema={schema} fields={fields} initialValues={{ val: '' }} onSubmit={onSubmit} />,
+    );
 
     const textarea = screen.getByLabelText('Notes');
     fireEvent.change(textarea, { target: { value: 'hello' } });
@@ -71,11 +70,16 @@ describe('ControlledZodDynamicForm field types', () => {
         name: 'val',
         label: 'Color',
         type: 'select',
-        options: [{ label: 'Red', value: 'red' }, { label: 'Blue', value: 'blue' }],
+        options: [
+          { label: 'Red', value: 'red' },
+          { label: 'Blue', value: 'blue' },
+        ],
       },
     ];
     const onSubmit = vi.fn();
-    render(<Harness schema={schema} fields={fields} initialValues={{ val: '' }} onSubmit={onSubmit} />);
+    render(
+      <Harness schema={schema} fields={fields} initialValues={{ val: '' }} onSubmit={onSubmit} />,
+    );
 
     fireEvent.change(screen.getByLabelText('Color'), { target: { value: 'red' } });
     fireEvent.click(screen.getByRole('button', { name: 'Save' }));
@@ -88,12 +92,22 @@ describe('ControlledZodDynamicForm field types', () => {
         name: 'tags',
         label: 'Tags',
         type: 'multiSelect',
-        options: [{ label: 'JS', value: 'js' }, { label: 'TS', value: 'ts' }],
+        options: [
+          { label: 'JS', value: 'js' },
+          { label: 'TS', value: 'ts' },
+        ],
       },
     ];
     const multiSchema = z.object({ tags: z.array(z.string()) });
     const onSubmit = vi.fn();
-    render(<Harness schema={multiSchema} fields={fields} initialValues={{ tags: [] }} onSubmit={onSubmit} />);
+    render(
+      <Harness
+        schema={multiSchema}
+        fields={fields}
+        initialValues={{ tags: [] }}
+        onSubmit={onSubmit}
+      />,
+    );
 
     fireEvent.click(screen.getByText('JS'));
     fireEvent.click(screen.getByRole('button', { name: 'Save' }));
@@ -105,19 +119,27 @@ describe('ControlledZodDynamicForm field types', () => {
       { name: 'val', label: 'Custom', type: 'custom' }, // no component
     ];
     const onSubmit = vi.fn();
-    render(<Harness schema={schema} fields={fields} initialValues={{ val: 'x' }} onSubmit={onSubmit} />);
+    render(
+      <Harness schema={schema} fields={fields} initialValues={{ val: 'x' }} onSubmit={onSubmit} />,
+    );
     expect(screen.getByText(/Missing component for custom field/)).toBeInTheDocument();
   });
 
   it('renders custom field with a component', () => {
     const CustomInput = ({ value, onChange }: any) => (
-      <input data-testid="custom-input" value={value as string} onChange={(e) => onChange(e.target.value)} />
+      <input
+        data-testid="custom-input"
+        value={value as string}
+        onChange={(e) => onChange(e.target.value)}
+      />
     );
     const fields: FieldConfigDynamicForm[] = [
       { name: 'val', label: 'Custom', type: 'custom', component: CustomInput },
     ];
     const onSubmit = vi.fn();
-    render(<Harness schema={schema} fields={fields} initialValues={{ val: '' }} onSubmit={onSubmit} />);
+    render(
+      <Harness schema={schema} fields={fields} initialValues={{ val: '' }} onSubmit={onSubmit} />,
+    );
     fireEvent.change(screen.getByTestId('custom-input'), { target: { value: 'test' } });
     fireEvent.click(screen.getByRole('button', { name: 'Save' }));
     expect(onSubmit).toHaveBeenCalledWith({ val: 'test' });
@@ -141,7 +163,9 @@ describe('ControlledZodDynamicForm field types', () => {
   it('shows validation errors on invalid submit', () => {
     const fields: FieldConfigDynamicForm[] = [{ name: 'val', label: 'Val', type: 'text' }];
     const onSubmit = vi.fn();
-    render(<Harness schema={schema} fields={fields} initialValues={{ val: '' }} onSubmit={onSubmit} />);
+    render(
+      <Harness schema={schema} fields={fields} initialValues={{ val: '' }} onSubmit={onSubmit} />,
+    );
     fireEvent.click(screen.getByRole('button', { name: 'Save' }));
     expect(onSubmit).not.toHaveBeenCalled();
     // Error block should be visible in the DOM
@@ -154,7 +178,9 @@ describe('ControlledZodDynamicForm field types', () => {
       { name: 'qty', label: 'Qty', type: 'number', step: '0.5' },
     ];
     const onSubmit = vi.fn();
-    render(<Harness schema={numSchema} fields={fields} initialValues={{ qty: 0 }} onSubmit={onSubmit} />);
+    render(
+      <Harness schema={numSchema} fields={fields} initialValues={{ qty: 0 }} onSubmit={onSubmit} />,
+    );
     const input = screen.getByLabelText('Qty') as HTMLInputElement;
     expect(input.step).toBe('0.5');
     fireEvent.change(input, { target: { value: '2.5' } });
@@ -174,7 +200,14 @@ describe('ControlledZodDynamicForm field types', () => {
     const multiSchema = z.object({ tags: z.array(z.string()) });
     const onSubmit = vi.fn();
     // 'unknown-tag' not in options → triggers fallback label logic
-    render(<Harness schema={multiSchema} fields={fields} initialValues={{ tags: ['unknown-tag'] }} onSubmit={onSubmit} />);
+    render(
+      <Harness
+        schema={multiSchema}
+        fields={fields}
+        initialValues={{ tags: ['unknown-tag'] }}
+        onSubmit={onSubmit}
+      />,
+    );
     expect(screen.getByTestId('mock-select')).toBeInTheDocument();
   });
 });
