@@ -156,7 +156,7 @@ function TableDataCustomBase<T>({
     anchor: HTMLElement | null;
     content: React.ReactNode;
   } | null>(null);
-  const closePopover = useCallback(() => setPopover(null), []);
+  const closePopover = useCallback(() => setPopover(null), [setPopover]);
 
   // Selection state (indices within visible data)
   const [selected, setSelected] = useState<Set<number>>(new Set());

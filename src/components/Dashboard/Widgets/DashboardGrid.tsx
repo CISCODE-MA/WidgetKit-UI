@@ -15,11 +15,11 @@ type Props = {
 export default function DashboardGrid({
   grid,
   widgets,
-  onLayoutChange,
+  onLayoutChange: _onLayoutChange,
   enableDrag = true,
   enableResize = true,
-  showActions = true,
-  persistKey,
+  showActions: _showActions = true,
+  persistKey: _persistKey,
 }: Props): JSX.Element {
   // Minimal grid rendering: each widget in a grid cell
   return (

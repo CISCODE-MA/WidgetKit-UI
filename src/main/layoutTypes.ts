@@ -96,6 +96,16 @@ export type TemplateFooterConfig = {
   className?: string;
 };
 
+/**
+ * Authenticated user data to display in the dashboard navbar.
+ */
+export type TemplateUserConfig = {
+  /** Full display name shown in the navbar user trigger */
+  fullName?: string;
+  /** Role label shown below the name */
+  role?: string;
+};
+
 export type TemplateLayoutConfig = {
   sidebar?: TemplateSidebarConfig;
   navbar?: TemplateNavbarConfig;
