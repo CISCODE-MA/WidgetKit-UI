@@ -1,14 +1,76 @@
 import React, { useState } from 'react';
-import ClickOutside from '../ClickOutside';
 import { Link } from 'react-router';
 import { useT } from '@ciscode/ui-translate-core';
+import DropdownShell from './DropdownShell';
+
+type NotificationKind = 'info' | 'success' | 'warning';
 
 interface NotificationItem {
   id: number;
+  kind: NotificationKind;
   title: string;
   description: string;
   time: string;
+  unread?: boolean;
 }
+
+const kindStyles: Record<NotificationKind, { bg: string; icon: React.ReactNode }> = {
+  info: {
+    bg: 'bg-[#EEF2FF] dark:bg-primary/20',
+    icon: (
+      <svg
+        width="16"
+        height="16"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="#3C50E0"
+        strokeWidth="2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      >
+        <circle cx="12" cy="12" r="10" />
+        <line x1="12" y1="8" x2="12" y2="12" />
+        <line x1="12" y1="16" x2="12.01" y2="16" />
+      </svg>
+    ),
+  },
+  success: {
+    bg: 'bg-[#EEFBF3] dark:bg-success/20',
+    icon: (
+      <svg
+        width="16"
+        height="16"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="#219653"
+        strokeWidth="2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      >
+        <polyline points="20 6 9 17 4 12" />
+      </svg>
+    ),
+  },
+  warning: {
+    bg: 'bg-[#FFF8EC] dark:bg-warning/20',
+    icon: (
+      <svg
+        width="16"
+        height="16"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="#FFA70B"
+        strokeWidth="2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      >
+        <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z" />
+        <line x1="12" y1="9" x2="12" y2="13" />
+        <line x1="12" y1="17" x2="12.01" y2="17" />
+      </svg>
+    ),
+  },
+};
 
 const DropdownNotification: React.FC = () => {
   const [dropdownOpen, setDropdownOpen] = useState(false);
@@ -18,90 +80,103 @@ const DropdownNotification: React.FC = () => {
   const notifications: NotificationItem[] = [
     {
       id: 1,
-      title: 'Edit your information in a swipe',
-      description:
-        'Sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim.',
-      time: '12 May, 2025',
+      kind: 'info',
+      title: 'Profile update available',
+      description: 'Your account information can be updated in settings.',
+      time: '2 min ago',
+      unread: true,
     },
     {
       id: 2,
-      title: 'It is a long established fact',
-      description: 'that a reader will be distracted by the readable.',
-      time: '24 Feb, 2025',
+      kind: 'success',
+      title: 'Invoice generated',
+      description: 'Invoice #2024-001 was successfully created.',
+      time: '1 hr ago',
+      unread: true,
     },
     {
       id: 3,
-      title: 'There are many variations',
-      description: 'of passages of Lorem Ipsum available, but the majority have suffered',
-      time: '04 Jan, 2025',
+      kind: 'warning',
+      title: 'Subscription expires soon',
+      description: 'Your plan expires in 7 days. Renew to avoid interruption.',
+      time: 'Yesterday',
     },
     {
       id: 4,
-      title: 'There are many variations',
-      description: 'of passages of Lorem Ipsum available, but the majority have suffered',
-      time: '01 Dec, 2024',
+      kind: 'info',
+      title: 'New feature released',
+      description: 'Check out the new dashboard widgets.',
+      time: '3 days ago',
     },
   ];
 
+  const unreadCount = notifications.filter((n) => n.unread).length;
+
+  const icon = (
+    <svg
+      width="17"
+      height="17"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
+      <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9" />
+      <path d="M13.73 21a2 2 0 0 1-3.46 0" />
+    </svg>
+  );
+
   return (
-    <ClickOutside onClick={() => setDropdownOpen(false)} className="relative">
-      <li>
-        <Link
-          onClick={() => {
-            setNotifying(false);
-            setDropdownOpen(!dropdownOpen);
-          }}
-          to="#"
-          className="relative flex h-8.5 w-8.5 items-center justify-center rounded-full border-[0.5px] border-stroke bg-gray hover:text-primary dark:border-strokedark dark:bg-meta-4 dark:text-white"
-        >
-          <span
-            className={`absolute -top-0.5 ltr:-right-0.5 rtl:-left-0.5 z-1 h-2 w-2 rounded-full bg-meta-1 ${
-              notifying === false ? 'hidden' : 'inline'
-            }`}
-          >
-            <span className="absolute -z-1 inline-flex h-full w-full animate-ping rounded-full bg-meta-1 opacity-75"></span>
-          </span>
-
-          <svg
-            className="fill-current duration-300 ease-in-out"
-            width="18"
-            height="18"
-            viewBox="0 0 18 18"
-            fill="none"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <path
-              d="M16.1999 14.9343L15.6374 14.0624C15.5249 13.8937 15.4687 13.7249 15.4687 13.528V7.67803C15.4687 6.01865 14.7655 4.47178 13.4718 3.31865C12.4312 2.39053 11.0812 1.7999 9.64678 1.6874V1.1249C9.64678 0.787402 9.36553 0.478027 8.9999 0.478027C8.6624 0.478027 8.35303 0.759277 8.35303 1.1249V1.65928C8.29678 1.65928 8.24053 1.65928 8.18428 1.6874C4.92178 2.05303 2.4749 4.66865 2.4749 7.79053V13.528C2.44678 13.8093 2.39053 13.9499 2.33428 14.0343L1.7999 14.9343C1.63115 15.2155 1.63115 15.553 1.7999 15.8343C1.96865 16.0874 2.2499 16.2562 2.55928 16.2562H8.38115V16.8749C8.38115 17.2124 8.6624 17.5218 9.02803 17.5218C9.36553 17.5218 9.6749 17.2405 9.6749 16.8749V16.2562H15.4687C15.778 16.2562 16.0593 16.0874 16.228 15.8343C16.3968 15.553 16.3968 15.2155 16.1999 14.9343ZM3.23428 14.9905L3.43115 14.653C3.5999 14.3718 3.68428 14.0343 3.74053 13.6405V7.79053C3.74053 5.31553 5.70928 3.23428 8.3249 2.95303C9.92803 2.78428 11.503 3.2624 12.6562 4.2749C13.6687 5.1749 14.2312 6.38428 14.2312 7.67803V13.528C14.2312 13.9499 14.3437 14.3437 14.5968 14.7374L14.7655 14.9905H3.23428Z"
-              fill=""
-            />
-          </svg>
-        </Link>
-
-        {dropdownOpen && (
-          <div className="absolute mt-2.5 flex h-90 w-75 flex-col rounded-sm border border-stroke bg-white shadow-default dark:border-strokedark dark:bg-boxdark ltr:-right-27 rtl:-left-27 sm:ltr:right-0 sm:rtl:left-0 sm:w-80">
-            <div className="px-4.5 py-3">
-              <h5 className="text-sm font-medium text-bodydark2">{t('dropdown.notifications')}</h5>
-            </div>
-
-            <ul className="flex h-auto flex-col overflow-y-auto">
-              {notifications.map(({ id, title, description, time }) => (
-                <li key={id}>
-                  <Link
-                    className="flex flex-col gap-2.5 border-t border-stroke px-4.5 py-3 hover:bg-gray-2 dark:border-strokedark dark:hover:bg-meta-4"
-                    to="#"
-                  >
-                    <p className="text-sm">
-                      <span className="text-black dark:text-white">{title}</span> {description}
-                    </p>
-                    <p className="text-xs">{time}</p>
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          </div>
-        )}
-      </li>
-    </ClickOutside>
+    <DropdownShell
+      ariaLabel="Notifications"
+      badgeCount={unreadCount}
+      notifying={notifying}
+      onTriggerClick={() => {
+        setNotifying(false);
+        setDropdownOpen(!dropdownOpen);
+      }}
+      isOpen={dropdownOpen}
+      onClose={() => setDropdownOpen(false)}
+      icon={icon}
+      title={t('dropdown.notifications')}
+      onMarkAllRead={() => setNotifying(false)}
+      footerTo="#"
+      footerLabel="View all notifications"
+    >
+      {notifications.map(({ id, kind, title, description, time, unread }) => {
+        const { bg, icon: kindIcon } = kindStyles[kind];
+        return (
+          <li key={id}>
+            <Link
+              to="#"
+              className={`flex items-start gap-3 border-b border-stroke px-4 py-3 transition-colors last:border-b-0 hover:bg-gray dark:border-strokedark dark:hover:bg-meta-4 ${unread ? 'bg-gray/50 dark:bg-meta-4/30' : ''}`}
+            >
+              <span
+                className={`mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-lg ${bg}`}
+              >
+                {kindIcon}
+              </span>
+              <div className="flex-1 min-w-0">
+                <div className="flex items-start justify-between gap-2">
+                  <p className="text-xs font-semibold text-black dark:text-white leading-snug">
+                    {title}
+                  </p>
+                  {unread && (
+                    <span className="mt-0.5 h-1.5 w-1.5 shrink-0 rounded-full bg-primary" />
+                  )}
+                </div>
+                <p className="mt-0.5 text-xs text-body dark:text-bodydark line-clamp-2 leading-relaxed">
+                  {description}
+                </p>
+                <p className="mt-1 text-[10px] text-bodydark2 dark:text-bodydark">{time}</p>
+              </div>
+            </Link>
+          </li>
+        );
+      })}
+    </DropdownShell>
   );
 };
 

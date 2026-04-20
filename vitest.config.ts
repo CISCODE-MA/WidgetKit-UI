@@ -3,7 +3,7 @@ import { defineConfig } from 'vitest/config';
 export default defineConfig({
   test: {
     testDir: 'tests',
-    environment: 'jsdom',
+    environment: 'happy-dom',
     setupFiles: ['tests/setup.ts'],
     include: [
       'tests/unit/**/*.{test,spec}.ts',
@@ -14,7 +14,7 @@ export default defineConfig({
     exclude: ['node_modules/**', 'tests/e2e/**', 'dist/**'],
     coverage: {
       provider: 'v8',
-      reporter: ['text', 'html', 'json'],
+      reporter: ['text', 'html', 'json', 'lcov'],
       reportsDirectory: 'coverage',
       exclude: ['src/components/Dashboard/**', 'src/layout/**', 'src/main/**'],
       thresholds: {
