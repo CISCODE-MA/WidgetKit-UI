@@ -1,22 +1,25 @@
-import type { JSX } from 'react';
+import type { JSX, ReactNode } from 'react';
 import DropdownMessage from './DropdownMessage';
 import DropdownNotification from './DropdownNotification';
+import type { DropdownUserConfig } from './DropdownUser';
 import DropdownUser from './DropdownUser';
 // import LogoIcon from '../../../assets/images/logo/logo-icon.svg';
-import DarkModeSwitcher from './DarkModeSwitcher';
-import React from 'react';
 import { useT } from '@ciscode/ui-translate-core';
+import DarkModeSwitcher from './DarkModeSwitcher';
 
 const Header = (props: {
   sidebarOpen: string | boolean | undefined;
   setSidebarOpen: (arg0: boolean) => void;
   onLogout?: () => void;
+  /** Authenticated user data to display in the navbar */
+  user?: DropdownUserConfig;
+  /** Optional extra actions rendered inside the header action list */
+  headerActions?: ReactNode;
 }): JSX.Element => {
   const t = useT('templateFe');
-  console.log('HEADER onLogout prop =', props.onLogout);
 
   return (
-    <header className="sticky top-0 z-999 flex w-full bg-white drop-shadow-1 dark:bg-boxdark dark:drop-shadow-none">
+    <header className="sticky top-0 z-[999] flex w-full border-b border-stroke bg-white drop-shadow-1 dark:border-strokedark dark:bg-boxdark dark:drop-shadow-none">
       <div className="flex flex-grow items-center justify-between px-4 py-4 shadow-2 md:px-6 2xl:px-11">
         <div className="flex items-center gap-2 sm:gap-4 lg:hidden">
           {/* <!-- Hamburger Toggle BTN --> */}
@@ -112,10 +115,13 @@ const Header = (props: {
             {/* <!-- Chat Notification Area --> */}
             <DropdownMessage />
             {/* <!-- Chat Notification Area --> */}
+
+            {/* <!-- Custom header actions (e.g. LanguageSwitcher) --> */}
+            {props.headerActions}
           </ul>
 
           {/* <!-- User Area --> */}
-          <DropdownUser onLogout={props.onLogout} />
+          <DropdownUser onLogout={props.onLogout} user={props.user} />
           {/* <!-- User Area --> */}
         </div>
       </div>

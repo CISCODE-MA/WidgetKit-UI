@@ -7,6 +7,7 @@
 ## 🎯 Component Architecture
 
 ### Component Structure
+
 ```
 ComponentName/
   ├── ComponentName.tsx       # Main component
@@ -17,6 +18,7 @@ ComponentName/
 ```
 
 ### Widget Component Template
+
 ```typescript
 import React from 'react';
 import { WidgetProps } from './Widget.types';
@@ -74,6 +76,7 @@ Widget.displayName = 'Widget';
 ## 📝 Props Standards
 
 ### Widget Props Interface
+
 ```typescript
 export interface WidgetProps {
   /** Widget title */
@@ -100,6 +103,7 @@ export interface WidgetProps {
 ## ♿ Accessibility (A11y)
 
 ### Widget Accessibility
+
 ```typescript
 // ✅ Good - Accessible widget
 <div
@@ -130,6 +134,7 @@ export interface WidgetProps {
 ```
 
 ### Required Accessibility Features
+
 - ✅ `role="region"` for widget containers
 - ✅ `aria-labelledby` linking to widget title
 - ✅ `role="status"` for loading states
@@ -142,6 +147,7 @@ export interface WidgetProps {
 ## 🎨 Theming & Styling
 
 ### Widget Variants
+
 ```typescript
 const widgetVariants = {
   default: {
@@ -168,6 +174,7 @@ const widgetVariants = {
 ```
 
 ### Widget Sizes
+
 ```typescript
 const widgetSizes = {
   small: {
@@ -189,16 +196,17 @@ const widgetSizes = {
 ```
 
 ### Responsive Widgets
+
 ```typescript
 const responsiveWidget = css`
   @media (max-width: ${theme.breakpoints.sm}) {
     grid-column: span 12; /* Full width on mobile */
   }
-  
+
   @media (min-width: ${theme.breakpoints.md}) {
     grid-column: span 6; /* Half width on tablet */
   }
-  
+
   @media (min-width: ${theme.breakpoints.lg}) {
     grid-column: span 4; /* Third width on desktop */
   }
@@ -210,6 +218,7 @@ const responsiveWidget = css`
 ## 🧪 Component Testing
 
 ### Test Coverage Requirements
+
 ```typescript
 describe('Widget', () => {
   it('renders title and children', () => {
@@ -218,7 +227,7 @@ describe('Widget', () => {
         <p>Content</p>
       </Widget>
     );
-    
+
     expect(screen.getByText('Test Widget')).toBeInTheDocument();
     expect(screen.getByText('Content')).toBeInTheDocument();
   });
@@ -236,7 +245,7 @@ describe('Widget', () => {
   it('calls onRefresh when refresh button clicked', async () => {
     const onRefresh = jest.fn();
     render(<Widget title="Test" onRefresh={onRefresh} />);
-    
+
     await userEvent.click(screen.getByLabelText('Refresh widget'));
     expect(onRefresh).toHaveBeenCalled();
   });
@@ -250,7 +259,7 @@ describe('Widget', () => {
     const { container } = render(
       <Widget title="Test" size="large">Content</Widget>
     );
-    
+
     expect(container.querySelector('.widget')).toHaveClass('widget-large');
   });
 
@@ -258,7 +267,7 @@ describe('Widget', () => {
     const { container } = render(
       <Widget title="Test" variant="primary">Content</Widget>
     );
-    
+
     expect(container.querySelector('.widget')).toHaveClass('widget-primary');
   });
 });
@@ -269,6 +278,7 @@ describe('Widget', () => {
 ## 🔄 State Management
 
 ### Widget State Hook
+
 ```typescript
 interface WidgetState<T> {
   data: T | null;
@@ -276,7 +286,7 @@ interface WidgetState<T> {
   error: string | null;
 }
 
-export const useWidgetData = <T,>(fetchFn: () => Promise<T>) => {
+export const useWidgetData = <T>(fetchFn: () => Promise<T>) => {
   const [state, setState] = useState<WidgetState<T>>({
     data: null,
     isLoading: true,
@@ -284,7 +294,7 @@ export const useWidgetData = <T,>(fetchFn: () => Promise<T>) => {
   });
 
   const fetchData = useCallback(async () => {
-    setState(prev => ({ ...prev, isLoading: true, error: null }));
+    setState((prev) => ({ ...prev, isLoading: true, error: null }));
     try {
       const data = await fetchFn();
       setState({ data, isLoading: false, error: null });
@@ -302,6 +312,7 @@ export const useWidgetData = <T,>(fetchFn: () => Promise<T>) => {
 ```
 
 ### Usage
+
 ```typescript
 const MyWidget: React.FC = () => {
   const { data, isLoading, error, refetch } = useWidgetData(() =>
@@ -326,6 +337,7 @@ const MyWidget: React.FC = () => {
 ## 📦 Component Exports
 
 ### Public API (index.ts)
+
 ```typescript
 // Export widget components
 export { Widget } from './Widget';
@@ -347,6 +359,7 @@ export type { WidgetGridProps } from './WidgetGrid.types';
 ## 🚫 Anti-Patterns to Avoid
 
 ### ❌ Hardcoded Dimensions
+
 ```typescript
 // Bad - Fixed sizes don't adapt
 <div style={{ width: '300px', height: '200px' }}>
@@ -356,6 +369,7 @@ export type { WidgetGridProps } from './WidgetGrid.types';
 ```
 
 ### ❌ No Loading States
+
 ```typescript
 // Bad - Content jumps when data loads
 return <div>{data?.map(...)}</div>;
@@ -366,6 +380,7 @@ return <div>{data.map(...)}</div>;
 ```
 
 ### ❌ Ignoring Widget Grid Layout
+
 ```typescript
 // Bad - Manual positioning
 <div style={{ position: 'absolute', top: 20, left: 20 }}>

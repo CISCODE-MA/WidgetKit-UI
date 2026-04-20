@@ -79,6 +79,7 @@ describe('ControlledZodDynamicForm', () => {
     });
 
     const onSubmit = vi.fn();
+    window.alert = window.alert ?? (() => {});
     const alertSpy = vi.spyOn(window, 'alert').mockImplementation(() => {});
 
     const { container } = render(

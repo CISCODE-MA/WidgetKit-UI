@@ -15,7 +15,7 @@ export default [
       'tests/**',
       'examples/**',
       'build/**',
-      'postcss.config.js',
+      'postcss.config.cjs',
     ],
   },
 

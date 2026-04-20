@@ -67,8 +67,8 @@ export default function ControlledZodDynamicForm({
         // Check if any error is specifically for "details" path
         let detailsErrorFound = false;
 
-        err.issues.forEach((issue: { path: any[]; message: string }) => {
-          const pathKey = issue.path.join('.');
+        err.issues.forEach((issue: { path: (string | number | symbol)[]; message: string }) => {
+          const pathKey = issue.path.map(String).join('.');
           newErrors[pathKey] = issue.message;
 
           // If the path starts with "details", we assume it's a problem with details

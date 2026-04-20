@@ -1,18 +1,18 @@
-import type { JSX } from 'react';
-import { useState, useEffect } from 'react';
-import type { ReactNode } from 'react';
+import type { JSX, ReactNode } from 'react';
+import { useEffect, useState } from 'react';
 import { useLocation } from 'react-router';
-import DashboardLayout from '../layout/DashboardLayout';
 import Loader from '../common/Loader';
+import DashboardLayout from '../layout/DashboardLayout';
 
 // Existing (legacy) sidebar model used by current Template implementation
 import { SidebarSection } from '../models/SidebarItemModel';
 
 // New typed configs (non-breaking additions)
 import type {
-  TemplateSidebarConfig,
-  TemplateNavbarConfig,
   TemplateFooterConfig,
+  TemplateNavbarConfig,
+  TemplateSidebarConfig,
+  TemplateUserConfig,
 } from './layoutTypes';
 
 /**
@@ -37,6 +37,17 @@ export interface DashboardProps {
   navbar?: TemplateNavbarConfig;
 
   /**
+   * Authenticated user data to display in the navbar (name + role).
+   */
+  user?: TemplateUserConfig;
+
+  /**
+   * Optional extra actions rendered inside the header action list
+   * (e.g. a LanguageSwitcher component).
+   */
+  headerActions?: ReactNode;
+
+  /**
    * Optional footer (rendered inside DashboardLayout when provided)
    */
   footer?: TemplateFooterConfig;
@@ -57,6 +68,8 @@ function Template({
   onLogout,
   navbar,
   footer,
+  user,
+  headerActions,
 }: DashboardProps): JSX.Element {
   const [loading, setLoading] = useState<boolean>(true);
   const { pathname } = useLocation();
@@ -107,6 +120,8 @@ function Template({
       logo={resolvedBrandNode}
       onLogout={onLogout}
       footer={footer}
+      user={user}
+      headerActions={headerActions}
     >
       {children}
     </DashboardLayout>

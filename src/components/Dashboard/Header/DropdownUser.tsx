@@ -1,69 +1,151 @@
-import { useState } from 'react';
-import ClickOutside from '../ClickOutside';
-import React from 'react';
-import { Link } from 'react-router';
 import { useT } from '@ciscode/ui-translate-core';
+import React, { useState } from 'react';
+import { Link } from 'react-router';
+import ClickOutside from '../ClickOutside';
+import { getInitials, pickGradient } from './avatarUtils';
+
+export type DropdownUserConfig = {
+  /** Full display name shown in the navbar trigger */
+  fullName?: string;
+  /** Role label shown below the name */
+  role?: string;
+  /** When true, renders animated skeleton placeholders instead of real data */
+  isLoading?: boolean;
+};
 
 type DropdownUserProps = {
   onLogout?: () => void;
+  /** Authenticated user data to display in the header */
+  user?: DropdownUserConfig;
 };
 
-const DropdownUser: React.FC<DropdownUserProps> = ({ onLogout }) => {
+/** Animated skeleton placeholder for avatar + name/role text */
+const UserSkeleton: React.FC<{ size?: 'sm' | 'md'; rows?: [string, string] }> = ({
+  size = 'md',
+  rows = ['w-24', 'w-16'],
+}) => {
+  const circleClass = size === 'sm' ? 'h-9 w-9' : 'h-11 w-11';
+  return (
+    <div className="flex items-center gap-3 animate-pulse">
+      <span className={`shrink-0 rounded-full bg-gray-200 dark:bg-meta-4 ${circleClass}`} />
+      <div className="flex flex-col gap-1.5">
+        <span className={`h-3 rounded-full bg-gray-200 dark:bg-meta-4 ${rows[0]}`} />
+        <span className={`h-2.5 rounded-full bg-gray-200 dark:bg-meta-4 ${rows[1]}`} />
+      </div>
+    </div>
+  );
+};
+
+/** Generates a gradient initials avatar from a name */
+const UserAvatar: React.FC<{ name: string; size?: 'sm' | 'md' }> = ({ name, size = 'md' }) => {
+  const initials = getInitials(name);
+  const gradient = pickGradient(name);
+  const sizeClass = size === 'sm' ? 'h-9 w-9 text-xs' : 'h-11 w-11 text-sm';
+
+  return (
+    <span
+      className={`flex shrink-0 items-center justify-center rounded-full bg-gradient-to-br ${gradient} ${sizeClass} font-semibold text-white`}
+    >
+      {initials}
+    </span>
+  );
+};
+
+const DropdownUser: React.FC<DropdownUserProps> = ({ onLogout, user }) => {
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const t = useT('templateFe');
-  const role = 'superAdmin'; // or from user data
-  const translatedRole = t(`roles.${role}`, { defaultValue: role });
-  console.log('DROPDOWN RENDER onLogout =', onLogout);
+
+  const isLoading = user?.isLoading ?? false;
+  const displayName = user?.fullName || 'Thomas Anree';
+  const displayRole = user?.role || t('roles.superAdmin', { defaultValue: 'superAdmin' });
 
   return (
     <ClickOutside onClick={() => setDropdownOpen(false)} className="relative">
-      <Link
+      {/* Trigger */}
+      <button
+        type="button"
         onClick={() => setDropdownOpen(!dropdownOpen)}
-        className="flex items-center gap-4"
-        to="#"
+        className="flex items-center gap-3 rounded-xl px-2 py-1.5 transition-colors hover:bg-gray dark:hover:bg-meta-4"
+        aria-label="User menu"
+        aria-expanded={dropdownOpen}
       >
-        <span className="hidden lg:block ltr:text-right rtl:text-left">
-          <span className="block text-sm font-medium text-black dark:text-white">Thomas Anree</span>
-          <span className="block text-xs">{translatedRole}</span>
-        </span>
+        {isLoading ? (
+          <span className="hidden lg:block">
+            <UserSkeleton size="sm" rows={['w-24', 'w-16']} />
+          </span>
+        ) : (
+          <span className="hidden lg:flex lg:flex-col ltr:text-right rtl:text-left">
+            <span className="text-sm font-semibold text-black dark:text-white leading-tight">
+              {displayName}
+            </span>
+            <span className="text-xs text-body dark:text-bodydark">{displayRole}</span>
+          </span>
+        )}
 
-        <span className="h-12 w-12">
-          <img
-            className="rounded-full"
-            src="https://img.freepik.com/free-psd/3d-illustration-person-with-sunglasses_23-2149436188.jpg?t=st=1746791582~exp=1746795182~hmac=309f4f17836c810c90c28cdb6f2e1503a0298aaf7d37c748cae051e32a33a927&w=740"
-            alt="User"
-          />
-        </span>
+        {isLoading ? (
+          <span className="shrink-0 h-9 w-9 rounded-full bg-gray-200 dark:bg-meta-4 animate-pulse" />
+        ) : (
+          <UserAvatar name={displayName} size="sm" />
+        )}
 
-        {/* Chevron (valid SVG) */}
         <svg
-          className="hidden fill-current sm:block"
-          width="12"
-          height="8"
-          viewBox="0 0 12 8"
+          className={`hidden text-bodydark1 transition-transform sm:block ${dropdownOpen ? 'rotate-180' : ''}`}
+          width="10"
+          height="10"
+          viewBox="0 0 24 24"
           fill="none"
-          xmlns="http://www.w3.org/2000/svg"
+          stroke="currentColor"
+          strokeWidth="2.5"
+          strokeLinecap="round"
+          strokeLinejoin="round"
         >
-          <path
-            fillRule="evenodd"
-            clipRule="evenodd"
-            d="M0.410765 0.910734C0.736202 0.585297 1.26384 0.585297 1.58928 0.910734L6.00002 5.32148L10.4108 0.910734C10.7362 0.585297 11.2638 0.585297 11.5893 0.910734C11.9147 1.23617 11.9147 1.76381 11.5893 2.08924L6.58928 7.08924C6.26384 7.41468 5.7362 7.41468 5.41077 7.08924L0.410765 2.08924C0.0853277 1.76381 0.0853277 1.23617 0.410765 0.910734Z"
-            fill=""
-          />
+          <polyline points="6 9 12 15 18 9" />
         </svg>
-      </Link>
+      </button>
 
+      {/* Dropdown panel */}
       {dropdownOpen && (
-        <div className="absolute mt-4 ltr:right-0 rtl:left-0 flex w-62.5 flex-col rounded-sm border border-stroke bg-white shadow-default dark:border-strokedark dark:bg-boxdark">
-          <ul className="flex flex-col gap-5 border-b border-stroke px-6 py-7.5 dark:border-strokedark">
+        <div className="absolute z-[9999] mt-2 ltr:right-0 rtl:left-0 w-64 flex flex-col rounded-xl border-[1.5px] border-stroke bg-white shadow-[0_8px_32px_rgba(0,0,0,0.10)] dark:border-strokedark dark:bg-boxdark dark:shadow-[0_8px_32px_rgba(0,0,0,0.40)]">
+          {/* Identity header */}
+          <div className="flex items-center gap-3 border-b border-stroke px-4 py-4 dark:border-strokedark">
+            {isLoading ? (
+              <UserSkeleton size="md" rows={['w-32', 'w-20']} />
+            ) : (
+              <>
+                <UserAvatar name={displayName} size="md" />
+                <div className="min-w-0">
+                  <p className="truncate text-sm font-semibold text-black dark:text-white">
+                    {displayName}
+                  </p>
+                  <p className="truncate text-xs text-body dark:text-bodydark">{displayRole}</p>
+                </div>
+              </>
+            )}
+          </div>
+
+          {/* Menu items */}
+          <ul className="flex flex-col py-2">
             <li>
               <Link
                 to="/profile"
-                className="flex items-center gap-3.5 text-sm font-medium duration-300 ease-in-out hover:text-primary lg:text-base"
                 onClick={() => setDropdownOpen(false)}
+                className="flex items-center gap-3 px-4 py-2.5 text-sm text-black transition-colors hover:bg-gray hover:text-primary dark:text-white dark:hover:bg-meta-4 dark:hover:text-primary"
               >
-                {/* placeholder icon to keep alignment */}
-                <span className="w-[22px]" />
+                {/* Person icon */}
+                <svg
+                  width="16"
+                  height="16"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="1.8"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  className="shrink-0 text-bodydark1"
+                >
+                  <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+                  <circle cx="12" cy="7" r="4" />
+                </svg>
                 {t('dropdown.profile')}
               </Link>
             </li>
@@ -71,9 +153,25 @@ const DropdownUser: React.FC<DropdownUserProps> = ({ onLogout }) => {
             <li>
               <Link
                 to="#"
-                className="flex items-center gap-3.5 text-sm font-medium duration-300 ease-in-out hover:text-primary lg:text-base"
+                className="flex items-center gap-3 px-4 py-2.5 text-sm text-black transition-colors hover:bg-gray hover:text-primary dark:text-white dark:hover:bg-meta-4 dark:hover:text-primary"
               >
-                <span className="w-[22px]" />
+                {/* Contacts / people icon */}
+                <svg
+                  width="16"
+                  height="16"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="1.8"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  className="shrink-0 text-bodydark1"
+                >
+                  <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
+                  <circle cx="9" cy="7" r="4" />
+                  <path d="M23 21v-2a4 4 0 0 0-3-3.87" />
+                  <path d="M16 3.13a4 4 0 0 1 0 7.75" />
+                </svg>
                 {t('dropdown.contacts')}
               </Link>
             </li>
@@ -81,27 +179,58 @@ const DropdownUser: React.FC<DropdownUserProps> = ({ onLogout }) => {
             <li>
               <Link
                 to="/settings"
-                className="flex items-center gap-3.5 text-sm font-medium duration-300 ease-in-out hover:text-primary lg:text-base"
                 onClick={() => setDropdownOpen(false)}
+                className="flex items-center gap-3 px-4 py-2.5 text-sm text-black transition-colors hover:bg-gray hover:text-primary dark:text-white dark:hover:bg-meta-4 dark:hover:text-primary"
               >
-                <span className="w-[22px]" />
+                {/* Settings gear icon */}
+                <svg
+                  width="16"
+                  height="16"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="1.8"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  className="shrink-0 text-bodydark1"
+                >
+                  <circle cx="12" cy="12" r="3" />
+                  <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z" />
+                </svg>
                 {t('dropdown.settings')}
               </Link>
             </li>
           </ul>
 
-          <button
-            type="button"
-            onClick={() => {
-              console.log('DROPDOWN LOGOUT CLICKED, onLogout =', onLogout);
-              setDropdownOpen(false);
-              onLogout?.();
-            }}
-            className="flex items-center gap-3.5 px-6 py-4 text-sm font-medium duration-300 ease-in-out hover:text-primary lg:text-base"
-          >
-            <span className="w-[22px]" />
-            {t('dropdown.logout')}
-          </button>
+          {/* Logout */}
+          <div className="border-t border-stroke dark:border-strokedark">
+            <button
+              type="button"
+              onClick={() => {
+                setDropdownOpen(false);
+                onLogout?.();
+              }}
+              className="flex w-full items-center gap-3 px-4 py-3 text-sm font-medium text-danger transition-colors hover:bg-danger/5 dark:hover:bg-danger/10"
+            >
+              {/* Logout icon */}
+              <svg
+                width="16"
+                height="16"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="1.8"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                className="shrink-0"
+              >
+                <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
+                <polyline points="16 17 21 12 16 7" />
+                <line x1="21" y1="12" x2="9" y2="12" />
+              </svg>
+              {t('dropdown.logout')}
+            </button>
+          </div>
         </div>
       )}
     </ClickOutside>
