@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
-import ClickOutside from '../ClickOutside';
 import { Link } from 'react-router';
 import { useT } from '@ciscode/ui-translate-core';
+import DropdownShell from './DropdownShell';
 
 type NotificationKind = 'info' | 'success' | 'warning';
 
@@ -112,118 +112,71 @@ const DropdownNotification: React.FC = () => {
 
   const unreadCount = notifications.filter((n) => n.unread).length;
 
+  const icon = (
+    <svg
+      width="17"
+      height="17"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
+      <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9" />
+      <path d="M13.73 21a2 2 0 0 1-3.46 0" />
+    </svg>
+  );
+
   return (
-    <ClickOutside onClick={() => setDropdownOpen(false)} className="relative">
-      <li>
-        <button
-          type="button"
-          onClick={() => {
-            setNotifying(false);
-            setDropdownOpen(!dropdownOpen);
-          }}
-          className="relative flex h-9 w-9 items-center justify-center rounded-xl border border-stroke bg-white text-bodydark1 shadow-sm transition-colors hover:border-primary hover:text-primary dark:border-strokedark dark:bg-boxdark dark:text-bodydark dark:hover:border-primary dark:hover:text-primary"
-          aria-label="Notifications"
-        >
-          {notifying && (
-            <span className="absolute -top-0.5 ltr:-right-0.5 rtl:-left-0.5 z-10 flex h-4 w-4 items-center justify-center rounded-full bg-danger text-[9px] font-bold text-white">
-              {unreadCount}
-            </span>
-          )}
-          <svg
-            width="17"
-            height="17"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-          >
-            <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9" />
-            <path d="M13.73 21a2 2 0 0 1-3.46 0" />
-          </svg>
-        </button>
-
-        {dropdownOpen && (
-          <div className="absolute z-[9999] mt-2 flex w-80 flex-col rounded-xl border-[1.5px] border-stroke bg-white shadow-[0_8px_32px_rgba(0,0,0,0.10)] dark:border-strokedark dark:bg-boxdark dark:shadow-[0_8px_32px_rgba(0,0,0,0.40)] ltr:right-0 rtl:left-0">
-            {/* Header */}
-            <div className="flex items-center justify-between border-b border-stroke px-4 py-3 dark:border-strokedark">
-              <div>
-                <h5 className="text-sm font-semibold text-black dark:text-white">
-                  {t('dropdown.notifications')}
-                </h5>
-                {notifying && (
-                  <p className="text-xs text-body dark:text-bodydark">{unreadCount} unread</p>
-                )}
-              </div>
-              <button
-                type="button"
-                onClick={() => setNotifying(false)}
-                className="text-xs font-medium text-primary hover:underline"
-              >
-                Mark all read
-              </button>
-            </div>
-
-            {/* List */}
-            <ul className="flex max-h-72 flex-col overflow-y-auto">
-              {notifications.map(({ id, kind, title, description, time, unread }) => {
-                const { bg, icon } = kindStyles[kind];
-                return (
-                  <li key={id}>
-                    <Link
-                      to="#"
-                      className={`flex items-start gap-3 border-b border-stroke px-4 py-3 transition-colors last:border-b-0 hover:bg-gray dark:border-strokedark dark:hover:bg-meta-4 ${unread ? 'bg-gray/50 dark:bg-meta-4/30' : ''}`}
-                    >
-                      {/* Kind icon */}
-                      <span
-                        className={`mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-lg ${bg}`}
-                      >
-                        {icon}
-                      </span>
-                      <div className="flex-1 min-w-0">
-                        <div className="flex items-start justify-between gap-2">
-                          <p className="text-xs font-semibold text-black dark:text-white leading-snug">
-                            {title}
-                          </p>
-                          {unread && (
-                            <span className="mt-0.5 h-1.5 w-1.5 shrink-0 rounded-full bg-primary" />
-                          )}
-                        </div>
-                        <p className="mt-0.5 text-xs text-body dark:text-bodydark line-clamp-2 leading-relaxed">
-                          {description}
-                        </p>
-                        <p className="mt-1 text-[10px] text-bodydark2 dark:text-bodydark">{time}</p>
-                      </div>
-                    </Link>
-                  </li>
-                );
-              })}
-            </ul>
-
-            {/* Footer */}
+    <DropdownShell
+      ariaLabel="Notifications"
+      badgeCount={unreadCount}
+      notifying={notifying}
+      onTriggerClick={() => {
+        setNotifying(false);
+        setDropdownOpen(!dropdownOpen);
+      }}
+      isOpen={dropdownOpen}
+      onClose={() => setDropdownOpen(false)}
+      icon={icon}
+      title={t('dropdown.notifications')}
+      onMarkAllRead={() => setNotifying(false)}
+      footerTo="#"
+      footerLabel="View all notifications"
+    >
+      {notifications.map(({ id, kind, title, description, time, unread }) => {
+        const { bg, icon: kindIcon } = kindStyles[kind];
+        return (
+          <li key={id}>
             <Link
               to="#"
-              className="flex items-center justify-center gap-1.5 border-t border-stroke py-3 text-xs font-medium text-primary transition-colors hover:bg-gray dark:border-strokedark dark:hover:bg-meta-4"
+              className={`flex items-start gap-3 border-b border-stroke px-4 py-3 transition-colors last:border-b-0 hover:bg-gray dark:border-strokedark dark:hover:bg-meta-4 ${unread ? 'bg-gray/50 dark:bg-meta-4/30' : ''}`}
             >
-              View all notifications
-              <svg
-                width="12"
-                height="12"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2.5"
-                strokeLinecap="round"
-                strokeLinejoin="round"
+              <span
+                className={`mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-lg ${bg}`}
               >
-                <polyline points="9 18 15 12 9 6" />
-              </svg>
+                {kindIcon}
+              </span>
+              <div className="flex-1 min-w-0">
+                <div className="flex items-start justify-between gap-2">
+                  <p className="text-xs font-semibold text-black dark:text-white leading-snug">
+                    {title}
+                  </p>
+                  {unread && (
+                    <span className="mt-0.5 h-1.5 w-1.5 shrink-0 rounded-full bg-primary" />
+                  )}
+                </div>
+                <p className="mt-0.5 text-xs text-body dark:text-bodydark line-clamp-2 leading-relaxed">
+                  {description}
+                </p>
+                <p className="mt-1 text-[10px] text-bodydark2 dark:text-bodydark">{time}</p>
+              </div>
             </Link>
-          </div>
-        )}
-      </li>
-    </ClickOutside>
+          </li>
+        );
+      })}
+    </DropdownShell>
   );
 };
 
