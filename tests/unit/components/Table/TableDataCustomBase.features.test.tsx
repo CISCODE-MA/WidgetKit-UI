@@ -207,8 +207,7 @@ describe('TableDataCustomBase features', () => {
   });
 
   // ─── Inline editing ───────────────────────────────────────────────────────
-  it('enables inline edit on double-click and commits on blur', () => {
-    const onCellEdit = vi.fn();
+  function renderInlineEdit(onCellEdit = vi.fn()) {
     const editCols: ColumnConfigTable<Row>[] = [{ key: 'name', title: 'Name', editable: true }];
     render(
       <TableDataCustomBase<Row>
@@ -218,28 +217,19 @@ describe('TableDataCustomBase features', () => {
         onCellEdit={onCellEdit}
       />,
     );
-    const cell = screen.getByText('Alice').closest('div')!;
-    fireEvent.dblClick(cell);
-    const input = screen.getByDisplayValue('Alice') as HTMLInputElement;
+    fireEvent.dblClick(screen.getByText('Alice').closest('div')!);
+    return { onCellEdit, input: screen.getByDisplayValue('Alice') };
+  }
+
+  it('enables inline edit on double-click and commits on blur', () => {
+    const { onCellEdit, input } = renderInlineEdit();
     fireEvent.change(input, { target: { value: 'Alicia' } });
     fireEvent.blur(input);
     expect(onCellEdit).toHaveBeenCalledWith(0, 'name', 'Alicia', data[0]);
   });
 
   it('cancels inline edit on Escape', () => {
-    const onCellEdit = vi.fn();
-    const editCols: ColumnConfigTable<Row>[] = [{ key: 'name', title: 'Name', editable: true }];
-    render(
-      <TableDataCustomBase<Row>
-        columns={editCols}
-        data={[data[0]]}
-        enableInlineEdit
-        onCellEdit={onCellEdit}
-      />,
-    );
-    const cell = screen.getByText('Alice').closest('div')!;
-    fireEvent.dblClick(cell);
-    const input = screen.getByDisplayValue('Alice');
+    const { onCellEdit, input } = renderInlineEdit();
     fireEvent.change(input, { target: { value: 'Changed' } });
     fireEvent.keyDown(input, { key: 'Escape' });
     expect(onCellEdit).not.toHaveBeenCalled();
@@ -247,19 +237,7 @@ describe('TableDataCustomBase features', () => {
   });
 
   it('commits inline edit on Enter', () => {
-    const onCellEdit = vi.fn();
-    const editCols: ColumnConfigTable<Row>[] = [{ key: 'name', title: 'Name', editable: true }];
-    render(
-      <TableDataCustomBase<Row>
-        columns={editCols}
-        data={[data[0]]}
-        enableInlineEdit
-        onCellEdit={onCellEdit}
-      />,
-    );
-    const cell = screen.getByText('Alice').closest('div')!;
-    fireEvent.dblClick(cell);
-    const input = screen.getByDisplayValue('Alice');
+    const { onCellEdit, input } = renderInlineEdit();
     fireEvent.change(input, { target: { value: 'Alicia' } });
     fireEvent.keyDown(input, { key: 'Enter' });
     expect(onCellEdit).toHaveBeenCalledWith(0, 'name', 'Alicia', data[0]);
